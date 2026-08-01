@@ -17,6 +17,7 @@
     --green:#3ecf8e;
     --yellow:#e8b93f;
     --red:#e8615f;
+    --red-dark:#7a1e1e;
     --grey:#5c6b80;
     --radius:12px;
   }
@@ -239,6 +240,69 @@
   .impact-story .arrow{color:var(--muted);}
   .impact-breakdown{margin-bottom:14px;}
 
+  /* Live status (color-coded: green=live, yellow=partial, light red=down, dark red=down 24h+) */
+  .status-legend{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:10px;font-size:12px;color:var(--muted);}
+  .legend-item{display:inline-flex;align-items:center;gap:6px;}
+  .legend-note{color:var(--muted);font-size:11px;}
+  .status-section{margin-top:16px;padding-top:14px;border-top:1px dashed var(--border);}
+  .backbone-badge{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:8px 10px;margin-bottom:10px;border:1px solid var(--border);border-left-width:3px;border-radius:6px;background:var(--panel-2, rgba(127,127,127,.06));}
+  .backbone-dot{display:inline-block;width:8px;height:8px;border-radius:50%;flex:none;}
+  .backbone-loading{opacity:.65;font-style:italic;}
+  .status-dot{
+    display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;
+    vertical-align:middle;box-shadow:0 0 0 2px rgba(255,255,255,.04);
+  }
+  .status-dot-empty{background:var(--grey);opacity:.6;}
+  .status-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+  .status-row{
+    display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:12px;
+    background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;
+  }
+  .status-row.status-empty{color:var(--muted);}
+  .status-city{font-weight:600;flex:0 0 auto;}
+  .status-label{color:var(--text);}
+  .status-time{color:var(--muted);margin-left:auto;}
+  .status-report-form{
+    display:none;flex-direction:column;gap:10px;
+    background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:12px;
+  }
+  .status-choices{display:flex;flex-wrap:wrap;gap:8px;}
+  .status-choice{
+    background:var(--panel);border:1px solid var(--border);border-radius:999px;
+    padding:7px 13px;font-size:12px;color:var(--muted);cursor:pointer;transition:.15s;
+  }
+  .status-choice:hover{border-color:var(--accent2);}
+  .status-choice.choice-live.active{background:rgba(62,207,142,.15);color:var(--green);border-color:rgba(62,207,142,.4);font-weight:600;}
+  .status-choice.choice-partial.active{background:rgba(232,185,63,.15);color:var(--yellow);border-color:rgba(232,185,63,.4);font-weight:600;}
+  .status-choice.choice-down.active{background:rgba(232,97,95,.15);color:var(--red);border-color:rgba(232,97,95,.4);font-weight:600;}
+
+  /* Bandwidth speed tracker (24h rolling, half-hour calibrated) */
+  .speed-section{margin-top:34px;padding-top:20px;border-top:1px solid var(--border);}
+  .speed-head h2{font-size:20px;margin:6px 0 4px;}
+  .speed-detail-section{margin-top:16px;padding-top:14px;border-top:1px dashed var(--border);}
+  .speed-rank-list{display:flex;flex-direction:column;gap:8px;margin-top:16px;}
+  .speed-rank-row{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px 14px;flex-wrap:wrap;}
+  .speed-rank-num{width:22px;flex:0 0 22px;text-align:center;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;}
+  .speed-rank-name{flex:1 1 160px;min-width:0;font-weight:600;font-size:14px;display:flex;align-items:center;gap:2px;}
+  .speed-rank-bars{flex:2 1 220px;display:flex;flex-direction:column;gap:4px;min-width:140px;}
+  .speed-bar-track{height:6px;background:var(--panel2);border-radius:999px;overflow:hidden;}
+  .speed-bar-fill{height:100%;border-radius:999px;}
+  .speed-bar-label{font-size:11px;color:var(--muted);}
+  .speed-tier-badge{flex:0 0 auto;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;padding:4px 9px;border-radius:999px;}
+  .speed-no-data-list{margin-top:12px;font-size:12px;color:var(--muted);}
+  .speed-report-form{
+    display:none;flex-direction:column;gap:10px;
+    background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:12px;
+  }
+  .speed-input-row{display:flex;gap:10px;flex-wrap:wrap;}
+  .speed-input-field{flex:1 1 120px;}
+  .speed-input-label{font-size:11px;color:var(--muted);margin-bottom:4px;}
+  .speed-input{
+    width:100%;background:var(--panel);border:1px solid var(--border);border-radius:8px;
+    color:var(--text);font-size:13px;padding:8px 10px;font-family:inherit;
+  }
+  .speed-input:focus{outline:none;border-color:var(--accent2);}
+
   @media (max-width:760px){
     .impact-grid{grid-template-columns:1fr;}
     .translate-form{grid-template-columns:1fr;}
@@ -248,12 +312,12 @@
     body{background:#fff;color:#111;padding:0;}
     .toolbar,.stats .stat:nth-child(n){display:none;}
     .toolbar{display:none;}
-    .privacy-note,.backend-banner,.lang-row,.translate-panel{display:none;}
+    .privacy-note,.backend-banner,.lang-row,.translate-panel,.status-legend{display:none;}
     .row{border:1px solid #ccc;break-inside:avoid;}
     .pill{border:1px solid #999;}
     .caret{display:none;}
     .row .detail{max-height:none!important;margin-top:8px!important;}
-    .qos-actions,.rate-form,.impact-form-card{display:none!important;}
+    .qos-actions,.rate-form,.impact-form-card,.status-report-form,.speed-report-form{display:none!important;}
   }
 </style>
 </head>
@@ -264,7 +328,15 @@
     <h1>Zimbabwe ISP Tracker</h1>
     <div class="sub">10 licensed providers · mobile &amp; fixed/wireless internet access · last synced from POTRAZ Q4 2024–Q4 2025 sector reports</div>
     <div><span class="privacy-note">📍 Your GPS location is only used in your browser to work out the nearest tracked city — raw coordinates are never sent anywhere. Only the city name, star rating and comment are shared.</span></div>
+    <div><span class="privacy-note">📱 On an older phone, a dot-matrix screen, or a slow connection? <a href="lite.html" style="color:inherit;">Try the no-script Lite version</a> — tiny download, works without JavaScript, includes an SMS rating option.</span></div>
     <div><span class="backend-banner mode-local" id="backendBanner">🟡 Local demo mode — connect a free Supabase backend to make ratings shared (see README.md)</span></div>
+    <div class="status-legend" id="statusLegend">
+      <span class="legend-item"><span class="status-dot" style="background:var(--green)"></span> <span id="legendLiveLabel">Live</span></span>
+      <span class="legend-item"><span class="status-dot" style="background:var(--yellow)"></span> <span id="legendPartialLabel">Partial</span></span>
+      <span class="legend-item"><span class="status-dot" style="background:var(--red)"></span> <span id="legendDownLabel">Down</span></span>
+      <span class="legend-item"><span class="status-dot" style="background:var(--red-dark)"></span> <span id="legendDownLongLabel">Down 24h+</span></span>
+      <span class="legend-item legend-note">🚦 per-city status reported by users, most severe shown per ISP</span>
+    </div>
     <div class="lang-row">
       <span class="lang-label-text" id="langLabelText">Language</span>
       <div class="chip lang-chip active" data-lang="en">English</div>
@@ -314,6 +386,8 @@
     <div class="btn" id="exportPdf">🖨️ <span id="btnExportPdfLabel">Export PDF Report</span></div>
     <div class="btn" id="exportCsv">📊 <span id="btnExportCsvLabel">Export ISP CSV</span></div>
     <div class="btn" id="exportQos">⭐ <span id="btnExportQosLabel">Export QoS CSV</span></div>
+    <div class="btn" id="exportStatus">🚦 <span id="btnExportStatusLabel">Export Status CSV</span></div>
+    <div class="btn" id="exportSpeed">📶 <span id="btnExportSpeedLabel">Export Speed CSV</span></div>
     <div class="btn" id="exportEpub">📚 <span id="btnExportEpubLabel">Export EPUB</span></div>
   </div>
 
@@ -353,6 +427,17 @@
         <div id="impactRecent"></div>
       </div>
     </div>
+  </section>
+
+  <section class="speed-section" id="speedSection">
+    <div class="speed-head">
+      <div class="eyebrow">Bandwidth</div>
+      <h2 id="speedTitleText">Bandwidth Speeds — ranked, 24h rolling average</h2>
+      <div class="sub" id="speedSubText">Calibrated from crowdsourced speed test submissions: results are grouped into 30-minute windows over the last 24 hours and averaged window-by-window, so a burst of reports in one hour can't skew the number. Green = well above the cross-ISP average, yellow = around average, red = below average.</div>
+    </div>
+    <div id="radarBenchmark"></div>
+    <div class="stats" id="speedStats"></div>
+    <div id="speedRankedList"></div>
   </section>
 
   <footer>
@@ -449,7 +534,30 @@ const I18N = {
     reset_link: "refresh / reset local data",
     stat_isps: "ISPs tracked",
     stat_reports: "crowdsourced QoS reports",
-    stat_conversions: "reported switches / signups"
+    stat_conversions: "reported switches / signups",
+    live_status_title: "Live Status — reported by users",
+    report_status: "Report current status",
+    status_live: "Live",
+    status_partial: "Partial",
+    status_down: "Down",
+    status_down_long: "Down 24h+",
+    no_status_yet: "No status reports yet — be the first to report.",
+    btn_submit_status: "Submit status",
+    btn_export_status: "Export Status CSV",
+    bandwidth_title: "Bandwidth Speeds — 24h rolling, crowdsourced",
+    report_speed: "Report a speed test",
+    download_label: "Download (Mbps)",
+    upload_label: "Upload (Mbps)",
+    btn_submit_speed: "Submit speed test",
+    btn_export_speed: "Export Speed CSV",
+    no_speed_data: "No speed tests reported in the last 24 hours",
+    no_speed_reports_yet: "No speed tests reported yet — be the first.",
+    speed_ranking_title: "Bandwidth Speeds — ranked, 24h rolling average",
+    speed_ranking_sub: "Calibrated from crowdsourced speed test submissions: results are grouped into 30-minute windows over the last 24 hours and averaged window-by-window, so a burst of reports in one hour can't skew the number. Green = well above the cross-ISP average, yellow = around average, red = below average.",
+    stat_speed_isps: "ISPs with 24h speed data",
+    stat_speed_reports: "speed test reports (24h window)",
+    speed_no_recent_any: "No speed tests reported in the last 24 hours yet.",
+    speed_no_recent: "No recent (24h) data"
   },
   sn: {
     lang_label: "Mutauro",
@@ -495,7 +603,30 @@ const I18N = {
     reset_link: "vandudza / dzosera data yepano",
     stat_isps: "Vapi Vari Kutariswa",
     stat_reports: "Zvinyorwa zveQoS zvinobva kuvanhu",
-    stat_conversions: "Vakachinja/kunyoresa vakashuma"
+    stat_conversions: "Vakachinja/kunyoresa vakashuma",
+    live_status_title: "Chimiro Chazvino — chinobva kuvanhu",
+    report_status: "Shuma Chimiro Chazvino",
+    status_live: "Chiri Kushanda",
+    status_partial: "Chiri Pakati",
+    status_down: "Hachishandi",
+    status_down_long: "Hachishandi Kwenguva Refu (24h+)",
+    no_status_yet: "Hapana chimiro chakashumwa parizvino — iva wekutanga kushuma.",
+    btn_submit_status: "Tumira Chimiro",
+    btn_export_status: "Budisa CSV yeChimiro",
+    bandwidth_title: "Kukurumidza kwe-Network — maawa 24 apfuura, kubva kuvanhu",
+    report_speed: "Shuma Bvunzo yeSpeed",
+    download_label: "Download (Mbps)",
+    upload_label: "Upload (Mbps)",
+    btn_submit_speed: "Tumira Bvunzo yeSpeed",
+    btn_export_speed: "Budisa CSV yeSpeed",
+    no_speed_data: "Hapana bvunzo dzespeed dzashumwa mumaawa 24 apfuura",
+    no_speed_reports_yet: "Hapana bvunzo dzespeed dzashumwa parizvino — iva wekutanga.",
+    speed_ranking_title: "Kukurumidza kwe-Network — kurongwa, maawa 24",
+    speed_ranking_sub: "Zvinobva kubvunzo dzespeed dzinoshumwa nevanhu: mhinduro dzinoiswa mumapoka emaminitsi 30 mumaawa 24 apfuura ozoiswa pamwe chete kubva pane poka nepoka, kuti bvunzo zhinji panguva imwe dzirege kukanganisa nhamba. Girini = pamusoro chaizvo peavhareji, yero = pedyo neavhareji, tsvuku = pasi peavhareji.",
+    stat_speed_isps: "Vapi vane data yespeed (24h)",
+    stat_speed_reports: "Bvunzo dzespeed (mukati memaawa 24)",
+    speed_no_recent_any: "Hapana bvunzo dzespeed dzashumwa mumaawa 24 apfuura.",
+    speed_no_recent: "Hapana data yepanguva pfupi (24h)"
   },
   nd: {
     lang_label: "Ulimi",
@@ -541,7 +672,30 @@ const I18N = {
     reset_link: "vuselela / setha kutsha idatha yalapha",
     stat_isps: "Abahlinzeki Abalandelelwayo",
     stat_reports: "Imibiko ye-QoS evela ebantwini",
-    stat_conversions: "Abatshintshileyo/ababhalisileyo abavakashile"
+    stat_conversions: "Abatshintshileyo/ababhalisileyo abavakashile",
+    live_status_title: "Isimo Samanje — sivela ebantwini",
+    report_status: "Bika Isimo Samanje",
+    status_live: "Iyasebenza",
+    status_partial: "Iyingxenye",
+    status_down: "Ayisebenzi",
+    status_down_long: "Ayisebenzi Isikhathi Eside (24h+)",
+    no_status_yet: "Akukho zimo ezibikiwe okwamanje — yiba ngowokuqala ukubika.",
+    btn_submit_status: "Thumela Isimo",
+    btn_export_status: "Khuphela i-CSV yesimo",
+    bandwidth_title: "Ijubane Lenethiwekhi — amahora angu-24 edlulileyo, sivela ebantwini",
+    report_speed: "Bika Ukuhlolwa Kwejubane",
+    download_label: "Ukudawuniloda (Mbps)",
+    upload_label: "Ukulayisha (Mbps)",
+    btn_submit_speed: "Thumela Ukuhlolwa Kwejubane",
+    btn_export_speed: "Khuphela i-CSV Yejubane",
+    no_speed_data: "Akukho kuhlolwa kwejubane okubikiwe emahoreni angu-24 edlulileyo",
+    no_speed_reports_yet: "Akukho kuhlolwa kwejubane okubikiwe okwamanje — yiba ngowokuqala.",
+    speed_ranking_title: "Ijubane Lenethiwekhi — ngokulandelana, amahora angu-24",
+    speed_ranking_sub: "Kubalwa kusuka ekuhlolweni kwejubane okuthunyelwa ngabantu: imiphumela ihlelwa ngamawindi emizuzu engu-30 phakathi kwamahora angu-24 edlulileyo bese kuthathwa isilinganiso ngalinye ngalinye, ukuze imibiko eminengi ngesikhathi esisodwa ingakwazi ukuguqula inombolo. Okuluhlaza = ngaphezulu kakhulu kwesilinganiso, okuphuzi = eduze kwesilinganiso, okubomvu = ngaphansi kwesilinganiso.",
+    stat_speed_isps: "Abahlinzeki abanedatha yejubane (24h)",
+    stat_speed_reports: "Imibiko yokuhlolwa kwejubane (esikhathini samahora angu-24)",
+    speed_no_recent_any: "Akukho kuhlolwa kwejubane okubikiwe emahoreni angu-24 edlulileyo.",
+    speed_no_recent: "Akukho datha yakamuva (24h)"
   },
   kck: {} // TjiKalanga — deliberately empty; fill in via the translation panel
 };
@@ -667,6 +821,89 @@ const DATA = [
 const STATUS_CYCLE = ["confirmed","estimated","unconfirmed"];
 const STATUS_LABEL = {confirmed:"Confirmed",estimated:"Estimated",unconfirmed:"Unconfirmed"};
 
+/* ---------- Live status (crowdsourced, color-coded) ----------
+   green = live, yellow = partial connection, light red = down,
+   dark red = down for 24h+ straight (computed from an unbroken
+   streak of "down" reports for that ISP+city, not stored directly). */
+const STATUS_META = {
+  live:        { color:"var(--green)",     label:"Live",       emoji:"🟢" },
+  partial:     { color:"var(--yellow)",    label:"Partial",    emoji:"🟡" },
+  down:        { color:"var(--red)",       label:"Down",       emoji:"🔴" },
+  "down-long": { color:"var(--red-dark)",  label:"Down 24h+",  emoji:"🟥" }
+};
+const STATUS_SEVERITY = { live:0, partial:1, down:2, "down-long":3 };
+
+/* ---------- Live backbone visibility (real, dynamic, no-auth feed) ----------
+   For ISPs that operate their own registered network (an ASN), we ask
+   RIPEstat (stat.ripe.net — RIPE NCC's free, public, no-signup data API)
+   whether that network is currently visible in the global internet routing
+   table, as seen live from dozens of real vantage points worldwide. This is
+   genuinely live data fetched directly from the browser — not crowdsourced,
+   not cached, not mocked. It answers one narrow, honest question: "has this
+   ISP's backbone been withdrawn from the global internet?" (the kind of
+   signal you'd see during a cable cut or a shutdown) — it is NOT "is my home
+   connection working right now"; that's what the crowdsourced Live Status
+   section is for. Only ISPs with a verified ASN are included (found via
+   RIPEstat's own searchcomplete/country-asns data calls — see README); the
+   rest simply don't show this card, rather than guessing. */
+const ISP_ASN = {
+  "TelOne": "37204",
+  "NetOne": "328088",
+  "Telecel Zimbabwe": "327770",
+  "PowerTel": "37184",
+  "Liquid (Liquid Home / ZOL)": "30844"
+};
+const BACKBONE = {}; // isp -> {level, ratio, seen, total, ts} | null(failed) | undefined(loading)
+const BACKBONE_META = {
+  routed:    { color:"var(--green)",  label:"Globally routed" },
+  degraded:  { color:"var(--yellow)", label:"Partially visible" },
+  withdrawn: { color:"var(--red)",    label:"Withdrawn from routing table" }
+};
+function backboneLevel(ratio){
+  if(ratio >= 0.85) return "routed";
+  if(ratio >= 0.4) return "degraded";
+  return "withdrawn";
+}
+async function fetchBackboneVisibility(isp, asn){
+  try{
+    const res = await fetch(`https://stat.ripe.net/data/visibility/data.json?resource=AS${asn}`, { cache:"no-store" });
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const json = await res.json();
+    const vis = (json && json.data && json.data.visibilities) || [];
+    if(vis.length===0){ BACKBONE[isp] = null; return; }
+    let seen=0, total=0;
+    vis.forEach(v=>{
+      const full = (v.ipv4_full_table_peer_count||0) + (v.ipv6_full_table_peer_count||0);
+      const notSeeing = (v.ipv4_full_table_peers_not_seeing||[]).length + (v.ipv6_full_table_peers_not_seeing||[]).length;
+      total += full;
+      seen += Math.max(0, full - notSeeing);
+    });
+    const ratio = total>0 ? seen/total : 0;
+    BACKBONE[isp] = { level: backboneLevel(ratio), ratio, seen, total, ts: Date.now() };
+  }catch(e){
+    console.warn("RIPEstat backbone visibility check failed for "+isp, e);
+    BACKBONE[isp] = null;
+  }
+}
+async function refreshBackboneVisibility(){
+  if(typeof fetch !== "function") return;
+  await Promise.all(Object.entries(ISP_ASN).map(([isp,asn])=>fetchBackboneVisibility(isp, asn)));
+  renderAll();
+}
+function backboneHtml(isp){
+  const asn = ISP_ASN[isp];
+  if(!asn) return "";
+  const b = BACKBONE[isp];
+  if(b === undefined) return `<div class="backbone-badge backbone-loading">🌐 Checking live backbone visibility via RIPEstat…</div>`;
+  if(b === null) return "";
+  const meta = BACKBONE_META[b.level];
+  const pct = Math.round(b.ratio*100);
+  return `<div class="backbone-badge" style="border-color:${meta.color}">
+    <span class="backbone-dot" style="background:${meta.color}"></span>
+    🌐 Backbone (AS${asn}, live via RIPEstat): <strong>${meta.label}</strong> — seen by ${pct}% of monitored internet routers worldwide
+  </div>`;
+}
+
 /* ---------- Crowdsourced quality-of-service data ---------- */
 const CITIES = [
   {name:"Harare", lat:-17.8292, lon:31.0522},
@@ -722,9 +959,71 @@ const SEED_CONVERSIONS = [
   {to_isp:"Starlink Zimbabwe", from_isp:"TelOne", reasons:["reliability"], city:"Gweru", comment:"No more load-shedding downtime.", ts: nowTs-18*DAY}
 ];
 
+/* ---------- Crowdsourced live-status ("is it up right now?") data ----------
+   Seeded with a mix of live/partial/down per ISP+city, including two
+   unbroken "down" streaks (NetOne/Masvingo, TelOne/Kwekwe) that cross the
+   24h mark so the dark-red "down 24h+" state has something to show. */
+const HOUR = 60*60*1000;
+const SEED_STATUS = [
+  {isp:"Econet Wireless", city:"Harare", status:"live", comment:"", ts: nowTs-1*HOUR},
+  {isp:"Econet Wireless", city:"Bulawayo", status:"partial", comment:"Slow during peak hours.", ts: nowTs-3*HOUR},
+  {isp:"Econet Wireless", city:"Mutare", status:"live", comment:"", ts: nowTs-5*HOUR},
+  {isp:"NetOne", city:"Masvingo", status:"down", comment:"Still down.", ts: nowTs-2*HOUR},
+  {isp:"NetOne", city:"Masvingo", status:"down", comment:"No change overnight.", ts: nowTs-10*HOUR},
+  {isp:"NetOne", city:"Masvingo", status:"down", comment:"Outage started after the storm.", ts: nowTs-30*HOUR},
+  {isp:"NetOne", city:"Chinhoyi", status:"live", comment:"", ts: nowTs-2*HOUR},
+  {isp:"Telecel Zimbabwe", city:"Mutare", status:"partial", comment:"Data works, calls drop.", ts: nowTs-4*HOUR},
+  {isp:"Starlink Zimbabwe", city:"Harare", status:"live", comment:"", ts: nowTs-20*60*1000},
+  {isp:"Starlink Zimbabwe", city:"Gweru", status:"live", comment:"", ts: nowTs-1*HOUR},
+  {isp:"Liquid (Liquid Home / ZOL)", city:"Bulawayo", status:"partial", comment:"Reduced speed since morning.", ts: nowTs-1*HOUR},
+  {isp:"Liquid (Liquid Home / ZOL)", city:"Harare", status:"down", comment:"Fibre cut reported nearby.", ts: nowTs-5*HOUR},
+  {isp:"Dandemutande", city:"Harare", status:"live", comment:"", ts: nowTs-3*HOUR},
+  {isp:"TelOne", city:"Harare", status:"down", comment:"ADSL down since this afternoon.", ts: nowTs-3*HOUR},
+  {isp:"TelOne", city:"Kwekwe", status:"down", comment:"Still no line.", ts: nowTs-1*HOUR},
+  {isp:"TelOne", city:"Kwekwe", status:"down", comment:"Line went down yesterday.", ts: nowTs-28*HOUR},
+  {isp:"Africom", city:"Harare", status:"live", comment:"", ts: nowTs-6*HOUR},
+  {isp:"PowerTel", city:"Chegutu", status:"partial", comment:"", ts: nowTs-2*HOUR}
+];
+
+/* ---------- Bandwidth speed tracker ----------
+   Crowdsourced upload/download speed-test submissions. The ranked section
+   and each ISP's own summary are "24h calibrated": only reports from the
+   last 24 hours count, and — to stop a burst of reports in one hour from
+   skewing the number — they're first averaged inside 30-minute windows,
+   then those window-averages are averaged together. Color is relative to
+   the average across all reporting ISPs: green = well above average,
+   yellow = around average, red = below average (see speedTier()). */
+const SPEED_TIER_META = {
+  high: { color:"var(--green)",  label:"High" },
+  avg:  { color:"var(--yellow)", label:"Average" },
+  low:  { color:"var(--red)",    label:"Below average" }
+};
+const SPEED_BAND = 0.15; // +/-15% around the cross-ISP average download speed
+const SEED_SPEED = [
+  {isp:"Econet Wireless", city:"Harare", download_mbps:22.5, upload_mbps:7.8, comment:"", ts: nowTs-20*60*1000},
+  {isp:"Econet Wireless", city:"Bulawayo", download_mbps:18.3, upload_mbps:6.1, comment:"", ts: nowTs-3*HOUR},
+  {isp:"Econet Wireless", city:"Mutare", download_mbps:24.0, upload_mbps:8.5, comment:"Great during off-peak.", ts: nowTs-12*HOUR},
+  {isp:"Econet Wireless", city:"Harare", download_mbps:19.0, upload_mbps:6.5, comment:"Older test, outside the 24h window on purpose.", ts: nowTs-26*HOUR},
+  {isp:"NetOne", city:"Chinhoyi", download_mbps:11.2, upload_mbps:4.0, comment:"", ts: nowTs-2*HOUR},
+  {isp:"NetOne", city:"Masvingo", download_mbps:7.5, upload_mbps:2.8, comment:"Slower than usual.", ts: nowTs-9*HOUR},
+  {isp:"Telecel Zimbabwe", city:"Mutare", download_mbps:8.9, upload_mbps:3.1, comment:"", ts: nowTs-5*HOUR},
+  {isp:"Starlink Zimbabwe", city:"Harare", download_mbps:112.4, upload_mbps:18.2, comment:"", ts: nowTs-40*60*1000},
+  {isp:"Starlink Zimbabwe", city:"Gweru", download_mbps:96.7, upload_mbps:15.5, comment:"", ts: nowTs-4*HOUR},
+  {isp:"Starlink Zimbabwe", city:"Beitbridge", download_mbps:88.2, upload_mbps:14.0, comment:"", ts: nowTs-15*HOUR},
+  {isp:"Liquid (Liquid Home / ZOL)", city:"Harare", download_mbps:42.6, upload_mbps:19.3, comment:"", ts: nowTs-1*HOUR},
+  {isp:"Liquid (Liquid Home / ZOL)", city:"Bulawayo", download_mbps:35.1, upload_mbps:16.8, comment:"", ts: nowTs-8*HOUR},
+  {isp:"Dandemutande", city:"Harare", download_mbps:31.4, upload_mbps:12.7, comment:"", ts: nowTs-6*HOUR},
+  {isp:"TelOne", city:"Harare", download_mbps:3.2, upload_mbps:0.6, comment:"ADSL, barely usable for video.", ts: nowTs-2*HOUR},
+  {isp:"TelOne", city:"Kwekwe", download_mbps:2.8, upload_mbps:0.5, comment:"", ts: nowTs-18*HOUR},
+  {isp:"Africom", city:"Harare", download_mbps:27.9, upload_mbps:11.2, comment:"", ts: nowTs-10*HOUR},
+  {isp:"PowerTel", city:"Chegutu", download_mbps:14.6, upload_mbps:5.9, comment:"", ts: nowTs-7*HOUR}
+];
+
 const STORAGE_KEY = "zw_isp_qos_reports_v1";
 const CONV_KEY = "zw_isp_conversions_v1";
 const TRANSLATION_KEY = "zw_isp_translations_v1";
+const STATUS_KEY = "zw_isp_status_reports_v1";
+const SPEED_KEY = "zw_isp_speed_reports_v1";
 
 function loadLocalReports(){
   try{
@@ -756,10 +1055,32 @@ function loadLocalTranslations(){
 function saveLocalTranslations(list){
   try{ localStorage.setItem(TRANSLATION_KEY, JSON.stringify(list)); }catch(e){}
 }
+function loadLocalStatus(){
+  try{
+    const raw = localStorage.getItem(STATUS_KEY);
+    if(raw){ const parsed = JSON.parse(raw); if(Array.isArray(parsed)) return parsed; }
+  }catch(e){}
+  return SEED_STATUS.slice();
+}
+function saveLocalStatus(list){
+  try{ localStorage.setItem(STATUS_KEY, JSON.stringify(list)); }catch(e){}
+}
+function loadLocalSpeed(){
+  try{
+    const raw = localStorage.getItem(SPEED_KEY);
+    if(raw){ const parsed = JSON.parse(raw); if(Array.isArray(parsed)) return parsed; }
+  }catch(e){}
+  return SEED_SPEED.slice();
+}
+function saveLocalSpeed(list){
+  try{ localStorage.setItem(SPEED_KEY, JSON.stringify(list)); }catch(e){}
+}
 
 let REPORTS = loadLocalReports();
 let CONVERSIONS = loadLocalConversions();
 let TRANSLATIONS = loadLocalTranslations();
+let STATUS_REPORTS = loadLocalStatus();
+let SPEED_REPORTS = loadLocalSpeed();
 
 function haversine(lat1,lon1,lat2,lon2){
   const R=6371;
@@ -824,6 +1145,166 @@ function conversionsAggregate(){
   return { total: CONVERSIONS.length, byIsp, byReason };
 }
 
+function citiesReportedFor(isp){
+  return Array.from(new Set(STATUS_REPORTS.filter(r=>r.isp===isp).map(r=>r.city)));
+}
+function statusFor(isp, city){
+  const rs = STATUS_REPORTS.filter(r=>r.isp===isp && r.city===city).sort((a,b)=>b.ts-a.ts);
+  if(rs.length===0) return null;
+  const latest = rs[0];
+  if(latest.status !== "down"){
+    return { level: latest.status, ts: latest.ts, downSinceTs:null, downForMs:0 };
+  }
+  // Walk back through an unbroken streak of "down" reports to find how
+  // long this city+ISP has been continuously down — that decides
+  // light red (<24h) vs dark red (>=24h), not any single report's age.
+  let streakStart = latest.ts;
+  for(let i=0;i<rs.length;i++){
+    if(rs[i].status === "down"){ streakStart = rs[i].ts; }
+    else break;
+  }
+  const downForMs = Date.now() - streakStart;
+  const level = downForMs >= DAY ? "down-long" : "down";
+  return { level, ts: latest.ts, downSinceTs: streakStart, downForMs };
+}
+function overallStatus(isp){
+  const cities = citiesReportedFor(isp);
+  let worst = null;
+  cities.forEach(city=>{
+    const s = statusFor(isp, city);
+    if(!s) return;
+    if(!worst || STATUS_SEVERITY[s.level] > STATUS_SEVERITY[worst.level]) worst = s;
+  });
+  return worst;
+}
+function formatDuration(ms){
+  const totalHours = Math.floor(ms/HOUR);
+  if(totalHours < 1) return Math.max(1,Math.floor(ms/60000))+"m";
+  if(totalHours < 24) return totalHours+"h";
+  const d = Math.floor(totalHours/24);
+  const h = totalHours % 24;
+  return h ? d+"d "+h+"h" : d+"d";
+}
+function liveStatusHtml(isp){
+  const cities = citiesReportedFor(isp);
+  if(cities.length===0){
+    return `<div class="status-row status-empty"><span class="status-dot status-dot-empty"></span><span class="status-label">${t("no_status_yet")}</span></div>`;
+  }
+  const entries = cities.map(city=>({city, s: statusFor(isp, city)})).filter(e=>e.s);
+  entries.sort((a,b)=> STATUS_SEVERITY[b.s.level]-STATUS_SEVERITY[a.s.level]);
+  const rowsHtml = entries.map(({city,s})=>{
+    const meta = STATUS_META[s.level];
+    let timeText = relTime(s.ts);
+    if(s.level==="down" || s.level==="down-long"){
+      timeText = "down "+formatDuration(s.downForMs)+" · last report "+relTime(s.ts);
+    }
+    return `<div class="status-row">
+      <span class="status-dot" style="background:${meta.color}"></span>
+      <span class="status-city">${city}</span>
+      <span class="status-label">${meta.emoji} ${meta.label}</span>
+      <span class="status-time">${timeText}</span>
+    </div>`;
+  }).join("");
+  return `<div class="status-list">${rowsHtml}</div>`;
+}
+function recentStatusReportsHtml(isp){
+  const rs = STATUS_REPORTS.filter(r=>r.isp===isp).slice().sort((a,b)=>b.ts-a.ts).slice(0,4);
+  if(rs.length===0) return "";
+  return `<div class="recent-reports">${rs.map(r=>{
+    const meta = STATUS_META[r.status] || STATUS_META.live;
+    return `<div class="report">
+      <span class="status-dot" style="background:${meta.color}"></span>
+      <span class="report-city">${r.city}</span>
+      <span class="report-time">${meta.label} · ${relTime(r.ts)}</span>
+      ${r.comment ? `<div class="report-comment">“${r.comment}”</div>` : ""}
+    </div>`;
+  }).join("")}</div>`;
+}
+
+function speedReportsInWindow(isp, windowMs){
+  const cutoff = Date.now() - (windowMs || DAY);
+  return SPEED_REPORTS.filter(r=>r.isp===isp && r.ts >= cutoff);
+}
+function calibratedSpeed(isp){
+  const rs = speedReportsInWindow(isp, DAY);
+  if(rs.length===0) return null;
+  const HALF_HOUR = 30*60*1000;
+  const now = Date.now();
+  const buckets = {};
+  rs.forEach(r=>{
+    const idx = Math.floor((now - r.ts)/HALF_HOUR);
+    if(!buckets[idx]) buckets[idx] = { downSum:0, upSum:0, count:0 };
+    buckets[idx].downSum += r.download_mbps;
+    buckets[idx].upSum += r.upload_mbps;
+    buckets[idx].count++;
+  });
+  const bucketList = Object.values(buckets);
+  const downloadMbps = bucketList.reduce((a,b)=>a+(b.downSum/b.count),0)/bucketList.length;
+  const uploadMbps = bucketList.reduce((a,b)=>a+(b.upSum/b.count),0)/bucketList.length;
+  return { downloadMbps, uploadMbps, buckets: bucketList.length, reportCount: rs.length };
+}
+function speedAggregateAll(){
+  const entries = DATA.map(d=>({isp:d.name, calib: calibratedSpeed(d.name)})).filter(e=>e.calib);
+  const overallAvgDown = entries.length ? entries.reduce((a,e)=>a+e.calib.downloadMbps,0)/entries.length : 0;
+  const overallAvgUp = entries.length ? entries.reduce((a,e)=>a+e.calib.uploadMbps,0)/entries.length : 0;
+  entries.sort((a,b)=>b.calib.downloadMbps - a.calib.downloadMbps);
+  return { entries, overallAvgDown, overallAvgUp };
+}
+function speedTier(downloadMbps, overallAvgDown){
+  if(!overallAvgDown || overallAvgDown<=0) return "avg";
+  if(downloadMbps >= overallAvgDown*(1+SPEED_BAND)) return "high";
+  if(downloadMbps < overallAvgDown*(1-SPEED_BAND)) return "low";
+  return "avg";
+}
+/* ---------- National bandwidth benchmark (live, via Cloudflare Radar) ----------
+   Cloudflare Radar publishes real, live internet-quality measurements
+   aggregated by country from Cloudflare's own network traffic. It requires
+   an API token to call, so it can't be fetched safely from a static page —
+   the token would be exposed to anyone who opens dev tools. Instead this
+   calls a small Supabase Edge Function (functions/radar-bandwidth in this
+   repo) that holds the token server-side and proxies just the Zimbabwe
+   summary back to the browser. If you haven't deployed that function (see
+   README "Live feeds" section), this simply stays hidden — the crowdsourced
+   ranking above keeps working exactly as before. This benchmark is
+   national-level only (Cloudflare Radar doesn't break bandwidth down per
+   named Zimbabwean ISP), so it's shown as one reference line, not folded
+   into any one ISP's ranking. */
+let RADAR_BENCHMARK; // undefined = not yet checked, null = unavailable, object = live data
+async function refreshRadarBenchmark(){
+  if(!BACKEND_CONFIGURED || typeof fetch !== "function"){ RADAR_BENCHMARK = null; renderSpeedSection(); return; }
+  try{
+    const res = await fetch(`${SUPABASE_CONFIG.url}/functions/v1/radar-bandwidth`, {
+      headers: { apikey: SUPABASE_CONFIG.anonKey, Authorization: "Bearer "+SUPABASE_CONFIG.anonKey }
+    });
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const json = await res.json();
+    RADAR_BENCHMARK = (json && json.configured && !json.error) ? json : null;
+  }catch(e){
+    console.warn("Cloudflare Radar national benchmark unavailable", e);
+    RADAR_BENCHMARK = null;
+  }
+  renderSpeedSection();
+}
+function radarBenchmarkHtml(){
+  if(!RADAR_BENCHMARK) return "";
+  const r = RADAR_BENCHMARK;
+  return `<div class="backbone-badge" style="border-color:var(--blue,#3b82f6)">
+    <span class="backbone-dot" style="background:var(--blue,#3b82f6)"></span>
+    🌍 Zimbabwe national reference (live, Cloudflare Radar${r.sampleDate ? ", "+r.sampleDate : ""}): <strong>${Number(r.downloadMbps).toFixed(1)} Mbps ↓ · ${Number(r.uploadMbps).toFixed(1)} Mbps ↑</strong> (p50, all networks) — a country-wide benchmark to compare the crowdsourced per-ISP figures below against.
+  </div>`;
+}
+function recentSpeedReportsHtml(isp){
+  const rs = SPEED_REPORTS.filter(r=>r.isp===isp).slice().sort((a,b)=>b.ts-a.ts).slice(0,4);
+  if(rs.length===0) return `<div class="empty-note" style="margin-bottom:12px;">${t("no_speed_reports_yet")}</div>`;
+  return `<div class="recent-reports">${rs.map(r=>`
+      <div class="report">
+        <span class="report-city">${r.city}</span>
+        <span class="report-stars" style="color:var(--accent2);">${r.download_mbps.toFixed(1)}↓ / ${r.upload_mbps.toFixed(1)}↑ Mbps</span>
+        <span class="report-time">${relTime(r.ts)}</span>
+        ${r.comment ? `<div class="report-comment">“${r.comment}”</div>` : ""}
+      </div>`).join("")}</div>`;
+}
+
 /* ---------- Backend sync (Supabase) ---------- */
 function setBanner(mode, text){
   const el = document.getElementById("backendBanner");
@@ -847,14 +1328,18 @@ async function initBackend(){
   }
   setBanner("connecting", t("banner_connecting"));
   try{
-    const [qosRes, convRes, trRes] = await Promise.all([
+    const [qosRes, convRes, trRes, statusRes, speedRes] = await Promise.all([
       supa.from("qos_reports").select("isp,stars,city,comment,created_at").order("created_at",{ascending:false}).limit(1000),
       supa.from("conversions").select("to_isp,from_isp,reasons,city,comment,created_at").order("created_at",{ascending:false}).limit(500),
-      supa.from("translations").select("id,lang,string_key,suggested_text,source_note,endorsements,status,created_at").order("created_at",{ascending:false}).limit(500)
+      supa.from("translations").select("id,lang,string_key,suggested_text,source_note,endorsements,status,created_at").order("created_at",{ascending:false}).limit(500),
+      supa.from("status_reports").select("isp,city,status,comment,created_at").order("created_at",{ascending:false}).limit(1000),
+      supa.from("speed_reports").select("isp,city,download_mbps,upload_mbps,comment,created_at").order("created_at",{ascending:false}).limit(1000)
     ]);
     if(qosRes.error) throw qosRes.error;
     if(convRes.error) throw convRes.error;
     if(trRes.error) throw trRes.error;
+    if(statusRes.error) throw statusRes.error;
+    if(speedRes.error) throw speedRes.error;
 
     if(qosRes.data && qosRes.data.length){
       REPORTS = qosRes.data.map(r=>({isp:r.isp, stars:r.stars, city:r.city||"Unknown", comment:r.comment||"", ts:new Date(r.created_at).getTime()}));
@@ -864,6 +1349,12 @@ async function initBackend(){
     }
     if(trRes.data){
       TRANSLATIONS = trRes.data.map(x=>({id:x.id, lang:x.lang, string_key:x.string_key, suggested_text:x.suggested_text, source_note:x.source_note, endorsements:x.endorsements, status:x.status, ts:new Date(x.created_at).getTime()}));
+    }
+    if(statusRes.data && statusRes.data.length){
+      STATUS_REPORTS = statusRes.data.map(r=>({isp:r.isp, city:r.city||"Unknown", status:r.status, comment:r.comment||"", ts:new Date(r.created_at).getTime()}));
+    }
+    if(speedRes.data && speedRes.data.length){
+      SPEED_REPORTS = speedRes.data.map(r=>({isp:r.isp, city:r.city||"Unknown", download_mbps:r.download_mbps, upload_mbps:r.upload_mbps, comment:r.comment||"", ts:new Date(r.created_at).getTime()}));
     }
     rebuildOverrides();
     setBanner("live", t("banner_live"));
@@ -890,6 +1381,42 @@ async function submitReport(report){
     }catch(e){
       console.warn("Could not sync rating to shared backend — kept locally only", e);
       setBanner("error", "🔴 Rating saved locally, but couldn't reach the shared backend to sync it");
+    }
+  }
+}
+
+async function submitStatus(entry){
+  STATUS_REPORTS.push(entry);
+  saveLocalStatus(STATUS_REPORTS);
+  openRows.add(entry.isp);
+  renderAll();
+  if(supa){
+    try{
+      const { error } = await supa.from("status_reports").insert([{
+        isp: entry.isp, city: entry.city, status: entry.status, comment: entry.comment
+      }]);
+      if(error) throw error;
+    }catch(e){
+      console.warn("Could not sync status report to shared backend — kept locally only", e);
+      setBanner("error", "🔴 Status report saved locally, but couldn't reach the shared backend to sync it");
+    }
+  }
+}
+
+async function submitSpeed(entry){
+  SPEED_REPORTS.push(entry);
+  saveLocalSpeed(SPEED_REPORTS);
+  openRows.add(entry.isp);
+  renderAll();
+  if(supa){
+    try{
+      const { error } = await supa.from("speed_reports").insert([{
+        isp: entry.isp, city: entry.city, download_mbps: entry.download_mbps, upload_mbps: entry.upload_mbps, comment: entry.comment
+      }]);
+      if(error) throw error;
+    }catch(e){
+      console.warn("Could not sync speed test to shared backend — kept locally only", e);
+      setBanner("error", "🔴 Speed test saved locally, but couldn't reach the shared backend to sync it");
     }
   }
 }
@@ -964,6 +1491,14 @@ function applyStaticTranslations(){
   document.getElementById("btnExportCsvLabel").textContent = t("btn_export_csv");
   document.getElementById("btnExportQosLabel").textContent = t("btn_export_qos");
   document.getElementById("btnExportEpubLabel").textContent = t("btn_export_epub");
+  document.getElementById("btnExportStatusLabel").textContent = t("btn_export_status");
+  document.getElementById("legendLiveLabel").textContent = t("status_live");
+  document.getElementById("legendPartialLabel").textContent = t("status_partial");
+  document.getElementById("legendDownLabel").textContent = t("status_down");
+  document.getElementById("legendDownLongLabel").textContent = t("status_down_long");
+  document.getElementById("btnExportSpeedLabel").textContent = t("btn_export_speed");
+  document.getElementById("speedTitleText").textContent = t("speed_ranking_title");
+  document.getElementById("speedSubText").textContent = t("speed_ranking_sub");
   document.getElementById("impactTitleText").textContent = t("impact_title");
   document.getElementById("impactSubText").textContent = t("impact_sub");
   document.getElementById("impactNewIspLabel").textContent = t("impact_new_isp");
@@ -1029,6 +1564,7 @@ function renderList(){
   }
 
   const convAgg = conversionsAggregate();
+  const speedAgg = speedAggregateAll();
 
   list.innerHTML = rows.map((d,i)=>{
     const rank = d.subscribers!==null ? (i+1) : "–";
@@ -1040,12 +1576,22 @@ function renderList(){
       }).join("")}</div>` : "";
     const convCount = convAgg.byIsp[d.name] || 0;
     const impactBadge = convCount ? `<div class="impact-badge">${t("impact_badge").replace("{n}", convCount)}</div>` : "";
+    const ov = overallStatus(d.name);
+    const rowStatusDot = ov
+      ? `<span class="status-dot" style="background:${STATUS_META[ov.level].color}" title="${STATUS_META[ov.level].label}"></span>`
+      : `<span class="status-dot status-dot-empty" title="No status reports yet"></span>`;
+    const speedCalib = calibratedSpeed(d.name);
+    const speedTierVal = speedCalib ? speedTier(speedCalib.downloadMbps, speedAgg.overallAvgDown) : null;
+    const speedTierMeta = speedTierVal ? SPEED_TIER_META[speedTierVal] : null;
+    const speedSummaryHtml = speedCalib
+      ? `<span style="color:${speedTierMeta.color};font-weight:600;">${speedCalib.downloadMbps.toFixed(1)} Mbps ↓ / ${speedCalib.uploadMbps.toFixed(1)} Mbps ↑</span> <span class="muted">(${speedTierMeta.label} · ${speedCalib.reportCount} report${speedCalib.reportCount===1?'':'s'} in ${speedCalib.buckets} 30-min window${speedCalib.buckets===1?'':'s'})</span>`
+      : `<span class="muted">${t("no_speed_data")}</span>`;
     return `
     <div class="row ${isOpen?'open':''}" data-name="${d.name}">
       <div class="row-top" data-role="toggle">
         <div class="rank">${rank}</div>
         <div class="name-wrap">
-          <div class="name">${d.name}</div>
+          <div class="name">${rowStatusDot}${d.name}</div>
           <div class="type">${d.type}</div>
         </div>
         <div class="subs">${fmt(d.subscribers)}<small>${d.subLabel}</small></div>
@@ -1058,6 +1604,70 @@ function renderList(){
           ${d.note}
           <span class="src">Source: ${d.source}</span>
           ${impactBadge}
+
+          <div class="status-section">
+            <div class="qos-head">
+              <div class="qos-title">🚦 ${tt("live_status_title")}</div>
+            </div>
+            ${backboneHtml(d.name)}
+            ${liveStatusHtml(d.name)}
+            ${recentStatusReportsHtml(d.name)}
+            <div class="qos-actions">
+              <button class="btn small" data-role="statusBtn" type="button">🚦 ${tt("report_status")}</button>
+              <span class="sync-note">${supa ? t("sync_shared") : t("sync_local")}</span>
+            </div>
+            <div class="status-report-form" data-role="statusForm">
+              <div class="status-choices" data-role="statusChoices">
+                <button type="button" class="status-choice choice-live" data-status="live">🟢 ${t("status_live")}</button>
+                <button type="button" class="status-choice choice-partial" data-status="partial">🟡 ${t("status_partial")}</button>
+                <button type="button" class="status-choice choice-down" data-status="down">🔴 ${t("status_down")}</button>
+              </div>
+              <div class="loc-row">
+                <button class="btn small" data-role="statusLocBtn" type="button">📍 ${tt("btn_use_location")}</button>
+                <select class="city-select" data-role="statusCitySelect">
+                  <option value="">${t("city_manual")}</option>
+                  ${CITIES.map(c=>`<option value="${c.name}">${c.name}</option>`).join("")}
+                </select>
+              </div>
+              <div class="loc-status" data-role="statusLocStatus"></div>
+              <textarea class="comment-box" data-role="statusCommentBox" maxlength="500" placeholder="${t("comment_placeholder")}"></textarea>
+              <button class="btn small primary" data-role="statusSubmitBtn" type="button">${tt("btn_submit_status")}</button>
+            </div>
+          </div>
+
+          <div class="speed-detail-section">
+            <div class="qos-head">
+              <div class="qos-title">📶 ${tt("bandwidth_title")}</div>
+              <div class="qos-avg">${speedSummaryHtml}</div>
+            </div>
+            ${recentSpeedReportsHtml(d.name)}
+            <div class="qos-actions">
+              <button class="btn small" data-role="speedBtn" type="button">📶 ${tt("report_speed")}</button>
+              <span class="sync-note">${supa ? t("sync_shared") : t("sync_local")}</span>
+            </div>
+            <div class="speed-report-form" data-role="speedForm">
+              <div class="speed-input-row">
+                <div class="speed-input-field">
+                  <div class="speed-input-label">${t("download_label")}</div>
+                  <input type="number" class="speed-input" data-role="speedDownInput" min="0" max="10000" step="0.1" placeholder="e.g. 25.4">
+                </div>
+                <div class="speed-input-field">
+                  <div class="speed-input-label">${t("upload_label")}</div>
+                  <input type="number" class="speed-input" data-role="speedUpInput" min="0" max="10000" step="0.1" placeholder="e.g. 8.2">
+                </div>
+              </div>
+              <div class="loc-row">
+                <button class="btn small" data-role="speedLocBtn" type="button">📍 ${tt("btn_use_location")}</button>
+                <select class="city-select" data-role="speedCitySelect">
+                  <option value="">${t("city_manual")}</option>
+                  ${CITIES.map(c=>`<option value="${c.name}">${c.name}</option>`).join("")}
+                </select>
+              </div>
+              <div class="loc-status" data-role="speedLocStatus"></div>
+              <textarea class="comment-box" data-role="speedCommentBox" maxlength="500" placeholder="${t("comment_placeholder")}"></textarea>
+              <button class="btn small primary" data-role="speedSubmitBtn" type="button">${tt("btn_submit_speed")}</button>
+            </div>
+          </div>
 
           <div class="qos-section">
             <div class="qos-head">
@@ -1173,6 +1783,128 @@ function renderList(){
       const city = rateForm.dataset.city || "Unknown";
       submitReport({ isp:name, stars, comment:(commentBox.value||"").trim(), city, ts: Date.now() });
     });
+
+    const statusBtn = rowEl.querySelector('[data-role="statusBtn"]');
+    const statusForm = rowEl.querySelector('[data-role="statusForm"]');
+    statusBtn.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      statusForm.style.display = (statusForm.style.display === "flex") ? "none" : "flex";
+    });
+
+    const statusChoices = rowEl.querySelector('[data-role="statusChoices"]');
+    statusChoices.querySelectorAll(".status-choice").forEach(choiceBtn=>{
+      choiceBtn.addEventListener("click",(e)=>{
+        e.stopPropagation();
+        statusChoices.querySelectorAll(".status-choice").forEach(b=>b.classList.remove("active"));
+        choiceBtn.classList.add("active");
+        statusForm.dataset.status = choiceBtn.getAttribute("data-status");
+      });
+    });
+
+    const statusLocBtn = rowEl.querySelector('[data-role="statusLocBtn"]');
+    const statusLocStatus = rowEl.querySelector('[data-role="statusLocStatus"]');
+    const statusCitySelect = rowEl.querySelector('[data-role="statusCitySelect"]');
+
+    statusLocBtn.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      if(!navigator.geolocation){
+        statusLocStatus.textContent = "Geolocation isn't supported here — pick a city manually.";
+        return;
+      }
+      statusLocStatus.textContent = "Detecting your location…";
+      navigator.geolocation.getCurrentPosition(pos=>{
+        const { latitude, longitude } = pos.coords;
+        const { city, distanceKm } = nearestCity(latitude, longitude);
+        statusForm.dataset.city = city;
+        statusCitySelect.value = city;
+        statusLocStatus.textContent = "📍 Nearest tracked city: "+city+" (~"+distanceKm+" km away)";
+      }, err=>{
+        statusLocStatus.textContent = "Couldn't get your location (" + err.message + ") — pick a city manually.";
+      }, {timeout:8000});
+    });
+
+    statusCitySelect.addEventListener("click", (e)=> e.stopPropagation());
+    statusCitySelect.addEventListener("change",(e)=>{
+      statusForm.dataset.city = statusCitySelect.value;
+      statusLocStatus.textContent = statusCitySelect.value ? "City set to "+statusCitySelect.value : "";
+    });
+
+    const statusCommentBox = rowEl.querySelector('[data-role="statusCommentBox"]');
+    statusCommentBox.addEventListener("click",(e)=> e.stopPropagation());
+
+    const statusSubmitBtn = rowEl.querySelector('[data-role="statusSubmitBtn"]');
+    statusSubmitBtn.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      const status = statusForm.dataset.status;
+      if(!status){
+        statusLocStatus.textContent = "Pick Live, Partial or Down before submitting.";
+        return;
+      }
+      const city = statusForm.dataset.city || "Unknown";
+      submitStatus({ isp:name, city, status, comment:(statusCommentBox.value||"").trim(), ts: Date.now() });
+      statusForm.dataset.status = "";
+      statusChoices.querySelectorAll(".status-choice").forEach(b=>b.classList.remove("active"));
+      statusCommentBox.value = "";
+    });
+
+    const speedBtn = rowEl.querySelector('[data-role="speedBtn"]');
+    const speedForm = rowEl.querySelector('[data-role="speedForm"]');
+    speedBtn.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      speedForm.style.display = (speedForm.style.display === "flex") ? "none" : "flex";
+    });
+
+    const speedDownInput = rowEl.querySelector('[data-role="speedDownInput"]');
+    const speedUpInput = rowEl.querySelector('[data-role="speedUpInput"]');
+    speedDownInput.addEventListener("click",(e)=> e.stopPropagation());
+    speedUpInput.addEventListener("click",(e)=> e.stopPropagation());
+
+    const speedLocBtn = rowEl.querySelector('[data-role="speedLocBtn"]');
+    const speedLocStatus = rowEl.querySelector('[data-role="speedLocStatus"]');
+    const speedCitySelect = rowEl.querySelector('[data-role="speedCitySelect"]');
+
+    speedLocBtn.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      if(!navigator.geolocation){
+        speedLocStatus.textContent = "Geolocation isn't supported here — pick a city manually.";
+        return;
+      }
+      speedLocStatus.textContent = "Detecting your location…";
+      navigator.geolocation.getCurrentPosition(pos=>{
+        const { latitude, longitude } = pos.coords;
+        const { city, distanceKm } = nearestCity(latitude, longitude);
+        speedForm.dataset.city = city;
+        speedCitySelect.value = city;
+        speedLocStatus.textContent = "📍 Nearest tracked city: "+city+" (~"+distanceKm+" km away)";
+      }, err=>{
+        speedLocStatus.textContent = "Couldn't get your location (" + err.message + ") — pick a city manually.";
+      }, {timeout:8000});
+    });
+
+    speedCitySelect.addEventListener("click", (e)=> e.stopPropagation());
+    speedCitySelect.addEventListener("change",(e)=>{
+      speedForm.dataset.city = speedCitySelect.value;
+      speedLocStatus.textContent = speedCitySelect.value ? "City set to "+speedCitySelect.value : "";
+    });
+
+    const speedCommentBox = rowEl.querySelector('[data-role="speedCommentBox"]');
+    speedCommentBox.addEventListener("click",(e)=> e.stopPropagation());
+
+    const speedSubmitBtn = rowEl.querySelector('[data-role="speedSubmitBtn"]');
+    speedSubmitBtn.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      const downloadVal = parseFloat(speedDownInput.value);
+      const uploadVal = parseFloat(speedUpInput.value);
+      if(!(downloadVal >= 0) || !(uploadVal >= 0)){
+        speedLocStatus.textContent = "Enter both a download and an upload speed (Mbps) before submitting.";
+        return;
+      }
+      const city = speedForm.dataset.city || "Unknown";
+      submitSpeed({ isp:name, city, download_mbps: downloadVal, upload_mbps: uploadVal, comment:(speedCommentBox.value||"").trim(), ts: Date.now() });
+      speedDownInput.value = "";
+      speedUpInput.value = "";
+      speedCommentBox.value = "";
+    });
   });
 }
 
@@ -1213,6 +1945,43 @@ function renderImpact(){
       ${c.comment ? `<div class="report-comment">“${c.comment}”</div>` : ""}
     </div>
   `).join("");
+}
+
+function renderSpeedSection(){
+  const { entries, overallAvgDown, overallAvgUp } = speedAggregateAll();
+  const totalReportsWindow = entries.reduce((a,e)=>a+e.calib.reportCount,0);
+
+  document.getElementById("radarBenchmark").innerHTML = radarBenchmarkHtml();
+
+  document.getElementById("speedStats").innerHTML = [
+    {num: entries.length, lbl: t("stat_speed_isps")},
+    {num: entries.length ? overallAvgDown.toFixed(1)+" Mbps" : "—", lbl:"avg download across reporting ISPs (24h)"},
+    {num: entries.length ? overallAvgUp.toFixed(1)+" Mbps" : "—", lbl:"avg upload across reporting ISPs (24h)"},
+    {num: totalReportsWindow, lbl: t("stat_speed_reports")}
+  ].map(s=>`<div class="stat"><div class="num">${s.num}</div><div class="lbl">${s.lbl}</div></div>`).join("");
+
+  const maxDown = entries.length ? Math.max(...entries.map(e=>e.calib.downloadMbps)) : 0;
+  const rankedHtml = entries.map((e,i)=>{
+    const tier = speedTier(e.calib.downloadMbps, overallAvgDown);
+    const meta = SPEED_TIER_META[tier];
+    const pct = maxDown>0 ? Math.max(6, Math.round((e.calib.downloadMbps/maxDown)*100)) : 6;
+    return `<div class="speed-rank-row">
+      <div class="speed-rank-num">${i+1}</div>
+      <div class="speed-rank-name"><span class="status-dot" style="background:${meta.color}"></span>${e.isp}</div>
+      <div class="speed-rank-bars">
+        <div class="speed-bar-track"><div class="speed-bar-fill" style="width:${pct}%;background:${meta.color}"></div></div>
+        <div class="speed-bar-label">${e.calib.downloadMbps.toFixed(1)} Mbps ↓ · ${e.calib.uploadMbps.toFixed(1)} Mbps ↑</div>
+      </div>
+      <div class="speed-tier-badge" style="background:${meta.color}22;color:${meta.color};">${meta.label}</div>
+    </div>`;
+  }).join("");
+
+  const noDataIsps = DATA.filter(d=>!entries.find(e=>e.isp===d.name)).map(d=>d.name);
+  const noDataHtml = noDataIsps.length ? `<div class="speed-no-data-list">${t("speed_no_recent")}: ${noDataIsps.join(", ")}</div>` : "";
+
+  document.getElementById("speedRankedList").innerHTML = entries.length
+    ? `<div class="speed-rank-list">${rankedHtml}</div>${noDataHtml}`
+    : `<div class="empty-note">${t("speed_no_recent_any")}</div>${noDataHtml}`;
 }
 
 function renderTranslatePanel(){
@@ -1270,6 +2039,7 @@ function renderAll(){
   renderStats();
   renderList();
   renderImpact();
+  renderSpeedSection();
   renderTranslatePanel();
 }
 
@@ -1377,6 +2147,22 @@ document.getElementById("exportQos").addEventListener("click", ()=>{
   downloadCsv(header, rows, "zimbabwe-isp-qos-reports.csv");
 });
 
+document.getElementById("exportStatus").addEventListener("click", ()=>{
+  const header = ["ISP","City","Status","Comment","Reported"];
+  const rows = STATUS_REPORTS.slice().sort((a,b)=>b.ts-a.ts).map(r=>[
+    r.isp, r.city, r.status, (r.comment||"").replace(/"/g,"'"), new Date(r.ts).toISOString()
+  ]);
+  downloadCsv(header, rows, "zimbabwe-isp-status-reports.csv");
+});
+
+document.getElementById("exportSpeed").addEventListener("click", ()=>{
+  const header = ["ISP","City","Download Mbps","Upload Mbps","Comment","Reported"];
+  const rows = SPEED_REPORTS.slice().sort((a,b)=>b.ts-a.ts).map(r=>[
+    r.isp, r.city, r.download_mbps, r.upload_mbps, (r.comment||"").replace(/"/g,"'"), new Date(r.ts).toISOString()
+  ]);
+  downloadCsv(header, rows, "zimbabwe-isp-speed-reports.csv");
+});
+
 function downloadCsv(header, rows, filename){
   const csv = [header, ...rows].map(r=>r.map(v=>`"${v}"`).join(",")).join("\n");
   const blob = new Blob([csv], {type:"text/csv"});
@@ -1422,12 +2208,18 @@ async function buildEpub(){
   const isChapterBody = "<h1>ISP Rankings &amp; Quality of Service</h1>" + isRows.map((d,i)=>{
     const qos = aggregate(d.name);
     const convCount = convAgg.byIsp[d.name] || 0;
+    const ov = overallStatus(d.name);
+    const statusText = ov ? STATUS_META[ov.level].label + ((ov.level==="down"||ov.level==="down-long") ? " ("+formatDuration(ov.downForMs)+")" : "") : "No status reports yet";
+    const speedCalib = calibratedSpeed(d.name);
+    const speedText = speedCalib ? speedCalib.downloadMbps.toFixed(1)+" Mbps down / "+speedCalib.uploadMbps.toFixed(1)+" Mbps up (24h, half-hour calibrated)" : "No speed tests in the last 24h";
     return `<h2>${i+1}. ${escapeXml(d.name)}</h2>
       <p><em>${escapeXml(d.type)}</em></p>
       <p><strong>Subscribers:</strong> ${d.subscribers!==null?fmt(d.subscribers):'—'} (${escapeXml(d.subLabel)})</p>
       <p>${escapeXml(d.note)}</p>
       <p><small>Source: ${escapeXml(d.source)}</small></p>
       <p><strong>Crowdsourced QoS:</strong> ${qos.count ? qos.avg.toFixed(1)+'★ from '+qos.count+' report(s)' : 'No ratings yet'}</p>
+      <p><strong>Reported live status:</strong> ${escapeXml(statusText)}</p>
+      <p><strong>Bandwidth:</strong> ${escapeXml(speedText)}</p>
       ${convCount ? `<p><strong>Reported switches/signups:</strong> ${convCount}</p>` : ""}`;
   }).join("\n<hr/>\n");
 
@@ -1518,17 +2310,23 @@ document.getElementById("resetQos").addEventListener("click", async ()=>{
     await initBackend();
     return;
   }
-  if(confirm("Reset all crowdsourced data (ratings, switch/signup reports) back to the sample data set? This clears anything you've submitted in this browser.")){
+  if(confirm("Reset all crowdsourced data (ratings, switch/signup reports, status reports, speed tests) back to the sample data set? This clears anything you've submitted in this browser.")){
     REPORTS = SEED_REPORTS.slice();
     CONVERSIONS = SEED_CONVERSIONS.slice();
+    STATUS_REPORTS = SEED_STATUS.slice();
+    SPEED_REPORTS = SEED_SPEED.slice();
     saveLocalReports(REPORTS);
     saveLocalConversions(CONVERSIONS);
+    saveLocalStatus(STATUS_REPORTS);
+    saveLocalSpeed(SPEED_REPORTS);
     renderAll();
   }
 });
 
 renderAll();
 initBackend();
+refreshBackboneVisibility(); // live RIPEstat fetch, fire-and-forget — re-renders when it resolves
+refreshRadarBenchmark();     // live Cloudflare Radar fetch via Edge Function, fire-and-forget
 </script>
 </body>
 </html>
