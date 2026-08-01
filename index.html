@@ -248,6 +248,8 @@
   .backbone-badge{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:8px 10px;margin-bottom:10px;border:1px solid var(--border);border-left-width:3px;border-radius:6px;background:var(--panel-2, rgba(127,127,127,.06));}
   .backbone-dot{display:inline-block;width:8px;height:8px;border-radius:50%;flex:none;}
   .backbone-loading{opacity:.65;font-style:italic;}
+  .referral-cta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 4px;}
+  .referral-disclosure{font-size:11px;color:var(--muted);}
   .status-dot{
     display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;
     vertical-align:middle;box-shadow:0 0 0 2px rgba(255,255,255,.04);
@@ -408,6 +410,7 @@
         <select class="city-select" id="impactToIsp" style="width:100%;margin-bottom:10px;">
           <option value="">—</option>
         </select>
+        <div id="impactReferralCta"></div>
         <div class="field-label" id="impactPrevIspLabel">Previous ISP (optional)</div>
         <select class="city-select" id="impactFromIsp" style="width:100%;margin-bottom:10px;">
           <option value="">—</option>
@@ -1328,18 +1331,20 @@ async function initBackend(){
   }
   setBanner("connecting", t("banner_connecting"));
   try{
-    const [qosRes, convRes, trRes, statusRes, speedRes] = await Promise.all([
+    const [qosRes, convRes, trRes, statusRes, speedRes, refRes] = await Promise.all([
       supa.from("qos_reports").select("isp,stars,city,comment,created_at").order("created_at",{ascending:false}).limit(1000),
       supa.from("conversions").select("to_isp,from_isp,reasons,city,comment,created_at").order("created_at",{ascending:false}).limit(500),
       supa.from("translations").select("id,lang,string_key,suggested_text,source_note,endorsements,status,created_at").order("created_at",{ascending:false}).limit(500),
       supa.from("status_reports").select("isp,city,status,comment,created_at").order("created_at",{ascending:false}).limit(1000),
-      supa.from("speed_reports").select("isp,city,download_mbps,upload_mbps,comment,created_at").order("created_at",{ascending:false}).limit(1000)
+      supa.from("speed_reports").select("isp,city,download_mbps,upload_mbps,comment,created_at").order("created_at",{ascending:false}).limit(1000),
+      supa.from("referral_clicks").select("isp,context,created_at").order("created_at",{ascending:false}).limit(2000)
     ]);
     if(qosRes.error) throw qosRes.error;
     if(convRes.error) throw convRes.error;
     if(trRes.error) throw trRes.error;
     if(statusRes.error) throw statusRes.error;
     if(speedRes.error) throw speedRes.error;
+    if(refRes.error) throw refRes.error;
 
     if(qosRes.data && qosRes.data.length){
       REPORTS = qosRes.data.map(r=>({isp:r.isp, stars:r.stars, city:r.city||"Unknown", comment:r.comment||"", ts:new Date(r.created_at).getTime()}));
@@ -1355,6 +1360,9 @@ async function initBackend(){
     }
     if(speedRes.data && speedRes.data.length){
       SPEED_REPORTS = speedRes.data.map(r=>({isp:r.isp, city:r.city||"Unknown", download_mbps:r.download_mbps, upload_mbps:r.upload_mbps, comment:r.comment||"", ts:new Date(r.created_at).getTime()}));
+    }
+    if(refRes.data){
+      REFERRAL_CLICKS = refRes.data.map(r=>({isp:r.isp, context:r.context||"detail", ts:new Date(r.created_at).getTime()}));
     }
     rebuildOverrides();
     setBanner("live", t("banner_live"));
@@ -1543,6 +1551,179 @@ function renderStats(){
   ).join("");
 }
 
+/* ---------- Referral / affiliate links (monetization) ----------
+   Off by default: fill in a real referral URL + tracking code per ISP here
+   once you've actually struck an agreement with them. Until an ISP is added
+   to this map, no "Sign up" button appears for it — the site never implies
+   a paid relationship that doesn't exist. Clicks are logged locally and
+   (if configured) to Supabase's referral_clicks table regardless of whether
+   a monetary deal is in place yet, so you have real click-through numbers
+   to show a prospective ISP partner during the sales conversation itself. */
+const ISP_REFERRAL = {
+  // "Econet Wireless": { url: "https://www.econet.co.zw/", code: "ZWISPTRACKER" },
+};
+const REFERRAL_KEY = "zw_isp_referral_clicks_v1";
+function loadLocalReferrals(){
+  try{ const raw = localStorage.getItem(REFERRAL_KEY); return raw ? JSON.parse(raw) : []; }
+  catch(e){ return []; }
+}
+function saveLocalReferrals(list){
+  try{ localStorage.setItem(REFERRAL_KEY, JSON.stringify(list)); }catch(e){}
+}
+let REFERRAL_CLICKS = loadLocalReferrals();
+function referralUrlFor(isp, context){
+  const cfg = ISP_REFERRAL[isp];
+  if(!cfg) return null;
+  try{
+    const url = new URL(cfg.url);
+    if(cfg.code) url.searchParams.set("ref", cfg.code);
+    url.searchParams.set("utm_source", "zw-isp-tracker");
+    url.searchParams.set("utm_medium", "referral");
+    url.searchParams.set("utm_campaign", context || "detail");
+    return url.toString();
+  }catch(e){ return cfg.url; }
+}
+function referralHtml(isp, context){
+  const cfg = ISP_REFERRAL[isp];
+  if(!cfg) return "";
+  return `<div class="referral-cta">
+    <a class="btn small primary" data-role="referralLink" data-isp="${isp}" data-context="${context||'detail'}" href="${referralUrlFor(isp, context)}" target="_blank" rel="noopener sponsored">🔗 Sign up with ${isp}</a>
+    <span class="referral-disclosure">Sponsored link — we may earn a referral fee if you sign up</span>
+  </div>`;
+}
+async function logReferralClick(isp, context){
+  const entry = { isp, context: context||"detail", ts: Date.now() };
+  REFERRAL_CLICKS.push(entry);
+  saveLocalReferrals(REFERRAL_CLICKS);
+  if(supa){
+    try{
+      const { error } = await supa.from("referral_clicks").insert([{ isp: entry.isp, context: entry.context }]);
+      if(error) throw error;
+    }catch(e){ console.warn("Could not sync referral click to shared backend", e); }
+  }
+}
+
+/* ---------- ISP-facing benchmarking export (sellable insights product) ----------
+   Packages data that already exists elsewhere in this app — QoS ratings,
+   live-status reliability, bandwidth tier, backbone visibility, and the
+   switch/signup flow — into a report shaped for a different reader than the
+   public site: an ISP's own team deciding whether independent, crowdsourced
+   perception data is worth paying to see regularly. Generating this report
+   is free; the monetizable product is a recurring, licensed version of it
+   (see README → "Monetization" for how that's meant to work). This in-app
+   export is the sample/teaser you'd show a prospective ISP customer. */
+function statusReliabilityPct(isp, windowMs){
+  const cutoff = Date.now() - (windowMs || 30*DAY);
+  const rs = STATUS_REPORTS.filter(r=>r.isp===isp && r.ts >= cutoff);
+  if(rs.length===0) return null;
+  const liveCount = rs.filter(r=>r.status==="live").length;
+  return { pct: (liveCount/rs.length)*100, sampleSize: rs.length };
+}
+function conversionFlowFor(isp){
+  const gained = CONVERSIONS.filter(c=>c.to_isp===isp);
+  const lost = CONVERSIONS.filter(c=>c.from_isp===isp);
+  const reasonCounts = {};
+  gained.forEach(c=>(c.reasons||[]).forEach(r=>{ reasonCounts[r] = (reasonCounts[r]||0)+1; }));
+  const topReasons = Object.entries(reasonCounts).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([r,n])=>`${r} (${n})`);
+  return { gained: gained.length, lost: lost.length, net: gained.length - lost.length, topReasons };
+}
+function competitivePositionTable(){
+  return DATA.map(d=>{
+    const qos = aggregate(d.name);
+    const speedCalib = calibratedSpeed(d.name);
+    const rel = statusReliabilityPct(d.name);
+    return {
+      name: d.name,
+      qosAvg: qos.count ? qos.avg : null,
+      qosCount: qos.count,
+      downloadMbps: speedCalib ? speedCalib.downloadMbps : null,
+      reliabilityPct: rel ? rel.pct : null
+    };
+  }).sort((a,b)=>(b.qosAvg||0)-(a.qosAvg||0));
+}
+function buildBenchmarkReportHtml(ispName){
+  const d = DATA.find(x=>x.name===ispName);
+  if(!d) return null;
+  const qos = aggregate(ispName);
+  const rel = statusReliabilityPct(ispName);
+  const speedAgg = speedAggregateAll();
+  const speedCalib = calibratedSpeed(ispName);
+  const speedTierVal = speedCalib ? speedTier(speedCalib.downloadMbps, speedAgg.overallAvgDown) : null;
+  const backbone = BACKBONE[ispName];
+  const flow = conversionFlowFor(ispName);
+  const table = competitivePositionTable();
+  const rankPos = table.findIndex(r=>r.name===ispName) + 1;
+  const refClicks = REFERRAL_CLICKS.filter(r=>r.isp===ispName).length;
+
+  const rowsHtml = table.map((r,i)=>`
+    <tr style="${r.name===ispName?'background:#fffbe6;font-weight:600;':''}">
+      <td>${i+1}</td><td>${r.name}</td>
+      <td>${r.qosAvg!==null ? r.qosAvg.toFixed(1)+"★ ("+r.qosCount+")" : "—"}</td>
+      <td>${r.downloadMbps!==null ? r.downloadMbps.toFixed(1)+" Mbps" : "—"}</td>
+      <td>${r.reliabilityPct!==null ? r.reliabilityPct.toFixed(0)+"%" : "—"}</td>
+    </tr>`).join("");
+
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Benchmarking Report — ${ispName}</title>
+  <style>
+    body{font-family:Georgia,'Times New Roman',serif;max-width:800px;margin:40px auto;color:#1a1a1a;line-height:1.5;padding:0 16px;}
+    h1{font-size:26px;margin-bottom:4px;} h2{font-size:18px;margin-top:32px;border-bottom:2px solid #222;padding-bottom:4px;}
+    .cover-sub{color:#555;margin-bottom:24px;} .stat-grid{display:flex;gap:16px;flex-wrap:wrap;margin:16px 0;}
+    .stat-card{border:1px solid #ccc;border-radius:8px;padding:12px 16px;min-width:140px;}
+    .stat-num{font-size:22px;font-weight:700;} .stat-lbl{font-size:12px;color:#666;}
+    table{width:100%;border-collapse:collapse;margin-top:12px;} td,th{border:1px solid #ccc;padding:6px 8px;font-size:13px;text-align:left;}
+    .cta{margin-top:36px;padding:16px;border:2px dashed #888;border-radius:8px;background:#fafafa;}
+    .disclosure{font-size:11px;color:#888;margin-top:28px;}
+    @media print{ .no-print{display:none;} }
+  </style></head><body>
+    <button class="no-print" onclick="window.print()" style="float:right;">🖨️ Print / Save as PDF</button>
+    <h1>Independent ISP Benchmarking Report</h1>
+    <div class="cover-sub">Prepared for <strong>${ispName}</strong> — generated ${new Date().toLocaleDateString()} from live, crowdsourced data on the Zimbabwe ISP Tracker</div>
+
+    <h2>Executive summary</h2>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-num">#${rankPos} of ${table.length}</div><div class="stat-lbl">Rank by QoS rating</div></div>
+      <div class="stat-card"><div class="stat-num">${qos.count ? qos.avg.toFixed(1)+"★" : "—"}</div><div class="stat-lbl">Avg QoS (${qos.count} ratings)</div></div>
+      <div class="stat-card"><div class="stat-num">${rel ? rel.pct.toFixed(0)+"%" : "—"}</div><div class="stat-lbl">Reported "live" (30d, n=${rel?rel.sampleSize:0})</div></div>
+      <div class="stat-card"><div class="stat-num">${speedCalib ? speedCalib.downloadMbps.toFixed(1)+" Mbps" : "—"}</div><div class="stat-lbl">24h avg download${speedTierVal?" · "+SPEED_TIER_META[speedTierVal].label:""}</div></div>
+      <div class="stat-card"><div class="stat-num">${flow.net>=0?"+":""}${flow.net}</div><div class="stat-lbl">Net switches (${flow.gained} gained / ${flow.lost} lost)</div></div>
+    </div>
+    ${backbone ? `<p>🌐 Backbone visibility (live, RIPEstat): <strong>${BACKBONE_META[backbone.level].label}</strong> — seen by ${Math.round(backbone.ratio*100)}% of monitored routers worldwide.</p>` : ""}
+
+    <h2>Why customers switched to ${ispName}</h2>
+    <p>${flow.topReasons.length ? "Top cited reasons: " + flow.topReasons.join(", ") + "." : "Not enough switch reports yet to identify a pattern."}</p>
+    ${refClicks ? `<p>${refClicks} referral click-through${refClicks===1?'':'s'} recorded from this site.</p>` : ""}
+
+    <h2>Competitive position — all tracked ISPs</h2>
+    <table><thead><tr><th>#</th><th>ISP</th><th>QoS</th><th>Download (24h)</th><th>Live reliability (30d)</th></tr></thead>
+    <tbody>${rowsHtml}</tbody></table>
+
+    <h2>Methodology</h2>
+    <p style="font-size:13px;color:#444;">QoS is a simple average of 1–5★ crowdsourced ratings. Live reliability is the
+    share of status reports marked "live" (vs. partial/down) over the trailing 30 days — a self-reported proxy, not a
+    monitored SLA. Bandwidth is a 24-hour, half-hour-bucketed average of crowdsourced speed tests (see the Bandwidth
+    section of the live site for the full calibration method). Backbone visibility, where shown, is a live BGP-routing
+    signal from RIPEstat, not a last-mile quality measure. None of this is independently verified or standardized —
+    treat it as directional public sentiment, not a certified benchmark.</p>
+
+    <div class="cta">
+      <strong>This is a free sample.</strong> A licensed subscription gets ${ispName} a monthly refreshed report,
+      historical trend charts, raw anonymized comment access, and priority flagging of emerging complaint clusters —
+      reach out via the contact details on the live site to discuss.
+    </div>
+    <div class="disclosure">Generated automatically from publicly crowdsourced data at the Zimbabwe ISP Tracker. Not
+    affiliated with, endorsed by, or verified against ${ispName}'s own internal metrics.</div>
+  </body></html>`;
+}
+function openBenchmarkReport(ispName){
+  const html = buildBenchmarkReportHtml(ispName);
+  if(!html) return;
+  const win = window.open("", "_blank");
+  if(!win){ alert("Please allow pop-ups to view the benchmarking report, or use your browser's print-to-PDF on this page instead."); return; }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+}
+
 function renderList(){
   const q = state.query.trim().toLowerCase();
   let rows = DATA.filter(d=>{
@@ -1604,6 +1785,10 @@ function renderList(){
           ${d.note}
           <span class="src">Source: ${d.source}</span>
           ${impactBadge}
+          ${referralHtml(d.name, "detail")}
+          <div class="qos-actions" style="margin-top:6px;">
+            <button class="btn small" data-role="benchmarkBtn" type="button">📈 Benchmarking Report</button>
+          </div>
 
           <div class="status-section">
             <div class="qos-head">
@@ -1784,6 +1969,21 @@ function renderList(){
       submitReport({ isp:name, stars, comment:(commentBox.value||"").trim(), city, ts: Date.now() });
     });
 
+    const referralLink = rowEl.querySelector('[data-role="referralLink"]');
+    if(referralLink){
+      referralLink.addEventListener("click",(e)=>{
+        e.stopPropagation();
+        logReferralClick(referralLink.getAttribute("data-isp"), referralLink.getAttribute("data-context"));
+      });
+    }
+    const benchmarkBtn = rowEl.querySelector('[data-role="benchmarkBtn"]');
+    if(benchmarkBtn){
+      benchmarkBtn.addEventListener("click",(e)=>{
+        e.stopPropagation();
+        openBenchmarkReport(name);
+      });
+    }
+
     const statusBtn = rowEl.querySelector('[data-role="statusBtn"]');
     const statusForm = rowEl.querySelector('[data-role="statusForm"]');
     statusBtn.addEventListener("click",(e)=>{
@@ -1915,6 +2115,7 @@ function renderImpact(){
     toSel.innerHTML = `<option value="">—</option>` + DATA.map(d=>`<option value="${d.name}">${d.name}</option>`).join("");
     fromSel.innerHTML = `<option value="">—</option>` + DATA.map(d=>`<option value="${d.name}">${d.name}</option>`).join("");
   }
+  document.getElementById("impactReferralCta").innerHTML = referralHtml(toSel.value, "switch_form");
 
   const agg = conversionsAggregate();
   document.getElementById("impactStats").innerHTML = [
@@ -2099,6 +2300,15 @@ document.getElementById("impactLocBtn").addEventListener("click", ()=>{
   }, err=>{
     status.textContent = "Couldn't get your location (" + err.message + ") — pick a city manually.";
   }, {timeout:8000});
+});
+
+document.getElementById("impactToIsp").addEventListener("change", ()=>{
+  document.getElementById("impactReferralCta").innerHTML = referralHtml(document.getElementById("impactToIsp").value, "switch_form");
+});
+document.getElementById("impactReferralCta").addEventListener("click",(e)=>{
+  const link = e.target.closest('[data-role="referralLink"]');
+  if(!link) return;
+  logReferralClick(link.getAttribute("data-isp"), link.getAttribute("data-context"));
 });
 
 document.getElementById("impactSubmitBtn").addEventListener("click", ()=>{
@@ -2315,10 +2525,12 @@ document.getElementById("resetQos").addEventListener("click", async ()=>{
     CONVERSIONS = SEED_CONVERSIONS.slice();
     STATUS_REPORTS = SEED_STATUS.slice();
     SPEED_REPORTS = SEED_SPEED.slice();
+    REFERRAL_CLICKS = [];
     saveLocalReports(REPORTS);
     saveLocalConversions(CONVERSIONS);
     saveLocalStatus(STATUS_REPORTS);
     saveLocalSpeed(SPEED_REPORTS);
+    saveLocalReferrals(REFERRAL_CLICKS);
     renderAll();
   }
 });
