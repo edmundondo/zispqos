@@ -22,6 +22,30 @@
     --radius:12px;
   }
   *{box-sizing:border-box;}
+  /* Reset every native <button> to blank slate so buttons used as chips/pills
+     look identical to the divs they replace — every component class below
+     (.chip, .btn, .city-chip, .lang-chip, .stat-split-item, etc.) supplies
+     its own explicit background/border/padding on top of this. Converting
+     interactive elements to real <button>s gives native keyboard (Tab,
+     Enter, Space) and screen-reader support for free — no custom JS needed. */
+  button{ font:inherit; margin:0; -webkit-appearance:none; appearance:none;
+    background:none; border:none; padding:0; cursor:pointer; color:inherit;
+    text-align:inherit; -webkit-tap-highlight-color:transparent; }
+  /* Visible keyboard-focus ring everywhere (mouse/touch users don't see it) */
+  button:focus-visible, [tabindex]:focus-visible, a:focus-visible,
+  input:focus-visible, select:focus-visible, textarea:focus-visible{
+    outline:3px solid var(--accent2); outline-offset:2px; border-radius:6px;
+  }
+  /* Skip link: invisible until a keyboard user tabs to it, then jumps
+     straight past the header controls to the provider list */
+  .skip-link{
+    position:absolute; left:-9999px; top:0; background:var(--accent2);
+    color:#0b0f14; padding:12px 18px; border-radius:0 0 10px 0;
+    font-weight:700; font-size:14px; z-index:1000; text-decoration:none;
+  }
+  .skip-link:focus{ left:0; }
+  /* Baseline touch-target size for every tap/click control on the page */
+  .chip, .city-chip, .lang-chip, .stat-split-item, .status-choice{ min-height:40px; }
   body{
     margin:0;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -111,6 +135,48 @@
     position:absolute;top:8px;right:8px;background:none;border:none;color:var(--muted);
     font-size:12px;padding:2px 6px;cursor:pointer;
   }
+
+  /* ---------- Simple Mode: a big-button, plain-language, icon-first way to
+     browse the same data — for young kids, non-tech-savvy visitors, or
+     anyone who'd rather tap a picture than read a dashboard. Toggles a
+     class on <body>; nothing about the underlying data or state changes,
+     it's a pure presentation layer on top of the same render functions. */
+  .simple-toggle{
+    display:inline-flex;align-items:center;gap:10px;background:var(--panel);
+    border:2px solid var(--accent);border-radius:999px;padding:12px 20px;
+    font-size:15px;font-weight:700;color:var(--accent);margin-top:14px;
+  }
+  .simple-toggle:hover{background:var(--panel2);}
+  .simple-toggle[aria-pressed="true"]{background:var(--accent);color:#0b0f14;}
+  .simple-toggle .simple-emoji{font-size:22px;}
+  .simple-nav{
+    display:none;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+    gap:14px;margin:22px 0;
+  }
+  body.simple-mode .simple-nav{display:grid;}
+  body.simple-mode .stats{display:none;}
+  body.simple-mode .toolbar{display:none;}
+  .simple-btn{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:8px;background:var(--panel);border:2px solid var(--border);
+    border-radius:20px;padding:22px 8px;min-height:112px;color:var(--text);
+    font-size:14px;font-weight:700;text-align:center;line-height:1.25;
+  }
+  .simple-btn:hover{border-color:var(--accent2);background:var(--panel2);}
+  .simple-btn[aria-pressed="true"]{border-color:var(--accent);background:rgba(79,209,197,.15);color:var(--accent);}
+  .simple-btn .simple-icon{font-size:42px;line-height:1;}
+  body.simple-mode .active-filter-banner{font-size:15px;padding:12px 18px;}
+  /* Simplify the closed provider row: bigger name/rating, hide jargon
+     (subscriber subtext, the confirmed/estimated/unconfirmed status pill,
+     the numeric rank) — the full detail panel is still one tap away. */
+  body.simple-mode .row{padding:18px 16px;}
+  body.simple-mode .rank{display:none;}
+  body.simple-mode .name{font-size:19px;}
+  body.simple-mode .subs small{display:none;}
+  body.simple-mode .pill{display:none;}
+  body.simple-mode .qos-badge{font-size:16px;font-weight:700;}
+  body.simple-mode .lang-row{gap:10px;}
+  body.simple-mode .lang-chip{font-size:14px;padding:10px 16px;}
 
   .stats{
     display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
@@ -250,6 +316,14 @@
   .comment-box:focus{outline:none;border-color:var(--accent2);}
 
   footer{margin-top:28px;color:var(--muted);font-size:12px;text-align:center;line-height:1.6;}
+  .matokipedo-footer{
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    padding-top:20px;border-top:1px solid var(--border);
+  }
+  .matokipedo-brand{display:flex;align-items:center;gap:10px;}
+  .matokipedo-logo{height:36px;width:auto;border-radius:6px;}
+  .matokipedo-tagline{font-size:12px;color:var(--muted);}
+  .matokipedo-footer .reset-link{font-size:11px;}
   footer .reset-link{color:var(--accent2);cursor:pointer;text-decoration:underline;}
 
   /* Translation panel */
@@ -380,6 +454,7 @@
 </style>
 </head>
 <body>
+<a href="#list" class="skip-link" id="skipLink">Skip to internet provider list</a>
 <div class="wrap">
   <header>
     <div class="eyebrow">POTRAZ · Zimbabwe Telecoms</div>
@@ -398,21 +473,21 @@
     </div>
     <div class="lang-row">
       <span class="lang-label-text" id="langLabelText">Language</span>
-      <div class="chip lang-chip active" data-lang="en">English</div>
-      <div class="chip lang-chip" data-lang="sn">ChiShona</div>
-      <div class="chip lang-chip" data-lang="nd">IsiNdebele</div>
-      <div class="chip lang-chip" data-lang="kck">TjiKalanga</div>
-      <div class="chip lang-chip" data-lang="ny">Chewa</div>
-      <div class="chip lang-chip" data-lang="bwg">Chibarwe</div>
-      <div class="chip lang-chip" data-lang="tjw">Khoisan (Tjwao)</div>
-      <div class="chip lang-chip" data-lang="nmq">Nambya</div>
-      <div class="chip lang-chip" data-lang="ndc">Ndau</div>
-      <div class="chip lang-chip" data-lang="ts">Shangani</div>
-      <div class="chip lang-chip" data-lang="st">Sotho</div>
-      <div class="chip lang-chip" data-lang="toi">Tonga</div>
-      <div class="chip lang-chip" data-lang="tn">Tswana</div>
-      <div class="chip lang-chip" data-lang="ve">Venda</div>
-      <div class="chip lang-chip" data-lang="xh">Xhosa</div>
+      <button type="button" class="chip lang-chip active" data-lang="en" aria-pressed="true">English</button>
+      <button type="button" class="chip lang-chip" data-lang="sn" aria-pressed="false">ChiShona</button>
+      <button type="button" class="chip lang-chip" data-lang="nd" aria-pressed="false">IsiNdebele</button>
+      <button type="button" class="chip lang-chip" data-lang="kck" aria-pressed="false">TjiKalanga</button>
+      <button type="button" class="chip lang-chip" data-lang="ny" aria-pressed="false">Chewa</button>
+      <button type="button" class="chip lang-chip" data-lang="bwg" aria-pressed="false">Chibarwe</button>
+      <button type="button" class="chip lang-chip" data-lang="tjw" aria-pressed="false">Khoisan (Tjwao)</button>
+      <button type="button" class="chip lang-chip" data-lang="nmq" aria-pressed="false">Nambya</button>
+      <button type="button" class="chip lang-chip" data-lang="ndc" aria-pressed="false">Ndau</button>
+      <button type="button" class="chip lang-chip" data-lang="ts" aria-pressed="false">Shangani</button>
+      <button type="button" class="chip lang-chip" data-lang="st" aria-pressed="false">Sotho</button>
+      <button type="button" class="chip lang-chip" data-lang="toi" aria-pressed="false">Tonga</button>
+      <button type="button" class="chip lang-chip" data-lang="tn" aria-pressed="false">Tswana</button>
+      <button type="button" class="chip lang-chip" data-lang="ve" aria-pressed="false">Venda</button>
+      <button type="button" class="chip lang-chip" data-lang="xh" aria-pressed="false">Xhosa</button>
       <button class="btn small" id="toggleTranslatePanel" type="button">🌍 <span id="translateHelpLabel">Help translate / suggest a correction</span></button>
       <div class="lang-status-pop" id="langStatusPop"></div>
     </div>
@@ -466,25 +541,31 @@
     <div id="translateQueue"></div>
   </div>
 
+  <button type="button" class="simple-toggle" id="simpleModeToggle" aria-pressed="false">
+    <span class="simple-emoji" aria-hidden="true">🧸</span>
+    <span id="simpleModeLabel">Simple Mode</span>
+  </button>
+  <div class="simple-nav" id="simpleNav" role="group" aria-label="Simple navigation"></div>
+
   <div class="stats" id="stats"></div>
-  <div class="active-filter-banner" id="activeFilterBanner"></div>
+  <div class="active-filter-banner" id="activeFilterBanner" aria-live="polite" aria-atomic="true"></div>
   <div class="city-drill-panel" id="cityDrillPanel"></div>
 
   <div class="toolbar">
     <input class="search" id="search" type="text" placeholder="Search ISPs…">
-    <div class="chip active" data-filter="all"><span id="filterAllLabel">All</span></div>
-    <div class="chip" data-filter="Mobile"><span id="filterMobileLabel">Mobile</span></div>
-    <div class="chip" data-filter="Fixed"><span id="filterFixedLabel">Fixed &amp; Wireless</span></div>
+    <button type="button" class="chip active" data-filter="all" aria-pressed="true"><span id="filterAllLabel">All</span></button>
+    <button type="button" class="chip" data-filter="Mobile" aria-pressed="false"><span id="filterMobileLabel">Mobile</span></button>
+    <button type="button" class="chip" data-filter="Fixed" aria-pressed="false"><span id="filterFixedLabel">Fixed &amp; Wireless</span></button>
     <div class="spacer"></div>
-    <div class="btn" id="exportPdf">🖨️ <span id="btnExportPdfLabel">Export PDF Report</span></div>
-    <div class="btn" id="exportCsv">📊 <span id="btnExportCsvLabel">Export ISP CSV</span></div>
-    <div class="btn" id="exportQos">⭐ <span id="btnExportQosLabel">Export QoS CSV</span></div>
-    <div class="btn" id="exportStatus">🚦 <span id="btnExportStatusLabel">Export Status CSV</span></div>
-    <div class="btn" id="exportSpeed">📶 <span id="btnExportSpeedLabel">Export Speed CSV</span></div>
-    <div class="btn" id="exportEpub">📚 <span id="btnExportEpubLabel">Export EPUB</span></div>
+    <button type="button" class="btn" id="exportPdf">🖨️ <span id="btnExportPdfLabel">Export PDF Report</span></button>
+    <button type="button" class="btn" id="exportCsv">📊 <span id="btnExportCsvLabel">Export ISP CSV</span></button>
+    <button type="button" class="btn" id="exportQos">⭐ <span id="btnExportQosLabel">Export QoS CSV</span></button>
+    <button type="button" class="btn" id="exportStatus">🚦 <span id="btnExportStatusLabel">Export Status CSV</span></button>
+    <button type="button" class="btn" id="exportSpeed">📶 <span id="btnExportSpeedLabel">Export Speed CSV</span></button>
+    <button type="button" class="btn" id="exportEpub">📚 <span id="btnExportEpubLabel">Export EPUB</span></button>
   </div>
 
-  <div class="list" id="list"></div>
+  <div class="list" id="list" tabindex="-1"></div>
 
   <section class="impact-section" id="impactSection">
     <div class="impact-head">
@@ -534,12 +615,12 @@
     <div id="speedRankedList"></div>
   </section>
 
-  <footer>
-    <span id="footerNote1">Click a row to expand</span> · <span id="footerNote2">click any status pill to cycle confirmed → estimated → unconfirmed · search and filter above</span><br>
-    Figures compiled from POTRAZ Annual &amp; Quarterly Sector Performance Reports. Fixed/wireless ISP subscriber counts are not individually disclosed by POTRAZ — those rows show traffic/market-share position instead.<br>
-    Quality-of-service stars, city tags, comments and switch/signup reports are crowdsourced. <span class="reset-link" id="resetQos">refresh / reset local data</span> · built with
-    <a href="https://supabase.com" target="_blank" rel="noopener" style="color:inherit;">Supabase</a> and
-    <a href="https://stuk.github.io/jszip/" target="_blank" rel="noopener" style="color:inherit;">JSZip</a> (both free, open source) — see <code>README.md</code> and <code>schema.sql</code> in this repo.
+  <footer class="matokipedo-footer">
+    <div class="matokipedo-brand">
+      <img src="matokipedo-logo.jpg" alt="Matokipedo logo" class="matokipedo-logo">
+      <span class="matokipedo-tagline">Live infrastructure monitoring by Matokipedo</span>
+    </div>
+    <span class="reset-link" id="resetQos">refresh / reset local data</span>
   </footer>
 </div>
 
@@ -651,7 +732,16 @@ const I18N = {
     stat_speed_isps: "ISPs with 24h speed data",
     stat_speed_reports: "speed test reports (24h window)",
     speed_no_recent_any: "No speed tests reported in the last 24 hours yet.",
-    speed_no_recent: "No recent (24h) data"
+    speed_no_recent: "No recent (24h) data",
+    simple_mode_off: "Simple Mode",
+    simple_mode_on: "Simple Mode: ON",
+    simple_nav_reset: "Show all",
+    simple_nav_mobile: "Phone internet",
+    simple_nav_fixed: "Home internet",
+    simple_nav_best: "Best rated",
+    simple_nav_near: "Near me",
+    simple_nav_lang: "Language",
+    skip_to_list: "Skip to internet provider list"
   },
   sn: {
     lang_label: "Mutauro",
@@ -2241,9 +2331,9 @@ function applyStaticTranslations(){
   document.getElementById("impactLocLabel").textContent = t("btn_use_location");
   document.getElementById("impactComment").placeholder = t("comment_placeholder");
   document.getElementById("impactSubmitLabel").textContent = t("btn_submit_story");
-  document.getElementById("footerNote1").textContent = t("footer_note1");
-  document.getElementById("footerNote2").textContent = t("footer_note2");
   document.getElementById("resetQos").textContent = t("reset_link");
+  document.getElementById("skipLink").textContent = t("skip_to_list");
+  document.getElementById("simpleModeLabel").textContent = simpleMode ? t("simple_mode_on") : t("simple_mode_off");
 
   document.getElementById("impactReasonTags").innerHTML = REASON_KEYS.map(k=>
     `<label class="reason-tag"><input type="checkbox" value="${k}" data-role="reasonCheck"> <span>${t("reason_"+k)}</span></label>`
@@ -2253,8 +2343,55 @@ function applyStaticTranslations(){
   impactCitySelect.innerHTML = `<option value="">${t("city_manual")}</option>` + CITIES.map(c=>`<option value="${c.name}">${c.name}</option>`).join("");
 
   document.querySelectorAll(".lang-chip").forEach(chip=>{
-    chip.classList.toggle("active", chip.getAttribute("data-lang")===currentLang);
+    const isActive = chip.getAttribute("data-lang")===currentLang;
+    chip.classList.toggle("active", isActive);
+    chip.setAttribute("aria-pressed", isActive ? "true" : "false");
   });
+
+  try{ document.documentElement.lang = currentLang; }catch(e){}
+}
+
+/* ---------- Simple Mode: big icon buttons, plain language, real <button>
+   keyboard/screen-reader support for free. Pure presentation layer — reuses
+   the exact same state/render functions as the detailed view. ---------- */
+let simpleMode = false;
+try{ simpleMode = localStorage.getItem("zw_isp_simple_mode") === "1"; }catch(e){}
+function applySimpleMode(){
+  document.body.classList.toggle("simple-mode", simpleMode);
+  const toggle = document.getElementById("simpleModeToggle");
+  if(toggle) toggle.setAttribute("aria-pressed", simpleMode ? "true" : "false");
+  const label = document.getElementById("simpleModeLabel");
+  if(label) label.textContent = simpleMode ? t("simple_mode_on") : t("simple_mode_off");
+}
+document.body.classList.toggle("simple-mode", simpleMode);
+
+function renderSimpleNav(){
+  const nav = document.getElementById("simpleNav");
+  if(!nav) return;
+  const mobileOn = state.filter==="Mobile";
+  const fixedOn = state.filter==="Fixed";
+  const bestOn = state.sortByRating;
+  const nearOn = !!state.cityFilter || document.getElementById("cityDrillPanel").classList.contains("open");
+  nav.innerHTML = `
+    <button type="button" class="simple-btn" data-simple="reset" aria-pressed="false">
+      <span class="simple-icon" aria-hidden="true">🔄</span>${t("simple_nav_reset")}
+    </button>
+    <button type="button" class="simple-btn" data-simple="mobile" aria-pressed="${mobileOn}">
+      <span class="simple-icon" aria-hidden="true">📱</span>${t("simple_nav_mobile")}
+    </button>
+    <button type="button" class="simple-btn" data-simple="fixed" aria-pressed="${fixedOn}">
+      <span class="simple-icon" aria-hidden="true">🏠</span>${t("simple_nav_fixed")}
+    </button>
+    <button type="button" class="simple-btn" data-simple="best" aria-pressed="${bestOn}">
+      <span class="simple-icon" aria-hidden="true">🌟</span>${t("simple_nav_best")}
+    </button>
+    <button type="button" class="simple-btn" data-simple="near" aria-pressed="${nearOn}">
+      <span class="simple-icon" aria-hidden="true">📍</span>${t("simple_nav_near")}
+    </button>
+    <button type="button" class="simple-btn" data-simple="lang" aria-pressed="false">
+      <span class="simple-icon" aria-hidden="true">🌍</span>${t("simple_nav_lang")}
+    </button>
+  `;
 }
 
 function renderStats(){
@@ -2266,10 +2403,10 @@ function renderStats(){
   const overallAvg = totalReports ? (REPORTS.reduce((a,r)=>a+r.stars,0)/totalReports).toFixed(1) : "—";
   const citiesWithData = Object.keys(cityReportCounts()).length;
   document.getElementById("stats").innerHTML = `
-    <div class="stat clickable" data-drill="all" title="Clear filters and jump to the full provider list">
+    <button type="button" class="stat clickable" data-drill="all" title="Clear filters and jump to the full provider list">
       <div class="num">${DATA.length}</div><div class="lbl">${t("stat_isps")}</div>
       <div class="drill-hint">↳ view all</div>
-    </div>
+    </button>
     <div class="stat">
       <div class="num">${fmt(confirmed)}</div><div class="lbl">combined confirmed subscribers</div>
     </div>
@@ -2278,35 +2415,37 @@ function renderStats(){
     </div>
     <div class="stat">
       <div class="stat-split">
-        <span class="stat-split-item${state.filter==="Mobile"?" active":""}" data-drill-type="Mobile">${mobile}<span class="split-lbl">mobile</span></span>
-        <span class="stat-split-item${state.filter==="Fixed"?" active":""}" data-drill-type="Fixed">${fixed}<span class="split-lbl">fixed/wireless</span></span>
+        <button type="button" class="stat-split-item${state.filter==="Mobile"?" active":""}" data-drill-type="Mobile" aria-pressed="${state.filter==="Mobile"}">${mobile}<span class="split-lbl">mobile</span></button>
+        <button type="button" class="stat-split-item${state.filter==="Fixed"?" active":""}" data-drill-type="Fixed" aria-pressed="${state.filter==="Fixed"}">${fixed}<span class="split-lbl">fixed/wireless</span></button>
       </div>
       <div class="drill-hint">↳ click a number to filter</div>
     </div>
-    <div class="stat clickable" data-drill="reports" title="Jump to the provider list">
+    <button type="button" class="stat clickable" data-drill="reports" title="Jump to the provider list">
       <div class="num">${totalReports}</div><div class="lbl">${t("stat_reports")}</div>
       <div class="drill-hint">↳ view reports</div>
-    </div>
-    <div class="stat clickable" data-drill="avg" title="Sort providers by rating">
+    </button>
+    <button type="button" class="stat clickable" data-drill="avg" title="Sort providers by rating" aria-pressed="${state.sortByRating}">
       <div class="num">${overallAvg}★</div><div class="lbl">avg QoS across all reports</div>
       <div class="drill-hint">${state.sortByRating ? "↳ sorting by rating" : "↳ sort by rating"}</div>
-    </div>
-    <div class="stat clickable" data-drill="cities" title="Browse and filter by city">
+    </button>
+    <button type="button" class="stat clickable" data-drill="cities" title="Browse and filter by city">
       <div class="num">${citiesWithData} / ${CITIES.length}</div><div class="lbl">cities with crowdsourced data</div>
       <div class="drill-hint">↳ browse by city</div>
-    </div>
+    </button>
   `;
   renderCityDrillPanel();
   renderActiveFilterBanner();
+  renderSimpleNav();
 }
 
 function renderCityDrillPanel(){
   const panel = document.getElementById("cityDrillPanel");
   const counts = cityReportCounts();
-  const chips = [`<div class="city-chip${!state.cityFilter?" active":""}" data-city="">All cities</div>`]
+  const chips = [`<button type="button" class="city-chip${!state.cityFilter?" active":""}" data-city="" aria-pressed="${!state.cityFilter}">All cities</button>`]
     .concat(CITIES.map(c=>{
       const n = counts[c.name] || 0;
-      return `<div class="city-chip${state.cityFilter===c.name?" active":""}" data-city="${c.name}">${c.name}${n?` <span class="cnt">(${n})</span>`:""}</div>`;
+      const isActive = state.cityFilter===c.name;
+      return `<button type="button" class="city-chip${isActive?" active":""}" data-city="${c.name}" aria-pressed="${isActive}">${c.name}${n?` <span class="cnt">(${n})</span>`:""}</button>`;
     }));
   panel.innerHTML = chips.join("");
 }
@@ -3056,6 +3195,7 @@ function renderTranslatePanel(){
 }
 
 function renderAll(){
+  applySimpleMode();
   applyStaticTranslations();
   renderStats();
   renderList();
@@ -3071,7 +3211,11 @@ document.getElementById("search").addEventListener("input", (e)=>{
 
 function setTypeFilter(val){
   state.filter = val;
-  document.querySelectorAll(".chip[data-filter]").forEach(c=>c.classList.toggle("active", c.getAttribute("data-filter")===val));
+  document.querySelectorAll(".chip[data-filter]").forEach(c=>{
+    const isActive = c.getAttribute("data-filter")===val;
+    c.classList.toggle("active", isActive);
+    c.setAttribute("aria-pressed", isActive ? "true" : "false");
+  });
   renderAll();
 }
 function scrollToList(){
@@ -3097,7 +3241,11 @@ document.getElementById("stats").addEventListener("click", (e)=>{
     state.filter = "all"; state.cityFilter = null; state.sortByRating = false; state.query = "";
     const search = document.getElementById("search");
     if(search) search.value = "";
-    document.querySelectorAll(".chip[data-filter]").forEach(c=>c.classList.toggle("active", c.getAttribute("data-filter")==="all"));
+    document.querySelectorAll(".chip[data-filter]").forEach(c=>{
+      const isActive = c.getAttribute("data-filter")==="all";
+      c.classList.toggle("active", isActive);
+      c.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
     document.getElementById("cityDrillPanel").classList.remove("open");
     renderAll();
     scrollToList();
@@ -3123,8 +3271,43 @@ document.getElementById("cityDrillPanel").addEventListener("click", (e)=>{
 document.getElementById("activeFilterBanner").addEventListener("click", (e)=>{
   if(e.target.id !== "clearDrillFilters") return;
   state.filter = "all"; state.cityFilter = null; state.sortByRating = false;
-  document.querySelectorAll(".chip[data-filter]").forEach(c=>c.classList.toggle("active", c.getAttribute("data-filter")==="all"));
+  document.querySelectorAll(".chip[data-filter]").forEach(c=>{
+    const isActive = c.getAttribute("data-filter")==="all";
+    c.classList.toggle("active", isActive);
+    c.setAttribute("aria-pressed", isActive ? "true" : "false");
+  });
   renderAll();
+});
+
+document.getElementById("simpleModeToggle").addEventListener("click", ()=>{
+  simpleMode = !simpleMode;
+  try{ localStorage.setItem("zw_isp_simple_mode", simpleMode ? "1" : "0"); }catch(e){}
+  renderAll();
+});
+document.getElementById("simpleNav").addEventListener("click", (e)=>{
+  const btn = e.target.closest("[data-simple]");
+  if(!btn) return;
+  const kind = btn.getAttribute("data-simple");
+  if(kind==="reset"){
+    document.getElementById("stats").querySelector('[data-drill="all"]')?.click();
+  } else if(kind==="mobile"){
+    setTypeFilter(state.filter==="Mobile" ? "all" : "Mobile");
+    scrollToList();
+  } else if(kind==="fixed"){
+    setTypeFilter(state.filter==="Fixed" ? "all" : "Fixed");
+    scrollToList();
+  } else if(kind==="best"){
+    state.sortByRating = !state.sortByRating;
+    renderAll();
+    scrollToList();
+  } else if(kind==="near"){
+    document.getElementById("cityDrillPanel").classList.toggle("open");
+    renderSimpleNav();
+  } else if(kind==="lang"){
+    document.querySelector(".lang-row").scrollIntoView({behavior:"smooth", block:"start"});
+    const firstChip = document.querySelector(".lang-chip");
+    if(firstChip) firstChip.focus();
+  }
 });
 
 document.querySelectorAll(".lang-chip").forEach(chip=>{
