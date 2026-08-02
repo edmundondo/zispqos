@@ -52,9 +52,65 @@
   .backend-banner.mode-live{background:rgba(62,207,142,.12);color:var(--green);border-color:rgba(62,207,142,.35);}
   .backend-banner.mode-error{background:rgba(232,97,95,.12);color:var(--red);border-color:rgba(232,97,95,.35);}
 
-  .lang-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;}
+  .lang-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;position:relative;}
   .lang-label-text{font-size:12px;color:var(--muted);margin-right:2px;}
   .need-translate{font-size:11px;opacity:.85;}
+
+  .stat.clickable{cursor:pointer;transition:.15s;}
+  .stat.clickable:hover{border-color:var(--accent2);background:var(--panel2);}
+  .stat.clickable:active{transform:scale(.98);}
+  .stat .drill-hint{font-size:10px;color:var(--accent2);margin-top:6px;opacity:.85;}
+  .stat-split{display:flex;gap:14px;}
+  .stat-split-item{cursor:pointer;padding:2px 6px;border-radius:6px;transition:.15s;}
+  .stat-split-item:hover{background:var(--panel2);}
+  .stat-split-item.active{background:rgba(124,156,255,.18);color:var(--accent2);font-weight:700;}
+  .stat-split-item .split-lbl{display:block;font-size:10px;color:var(--muted);font-weight:400;margin-top:2px;}
+
+  .active-filter-banner{
+    display:none;align-items:center;gap:10px;background:rgba(124,156,255,.1);
+    border:1px solid rgba(124,156,255,.35);border-radius:10px;padding:8px 14px;
+    font-size:12.5px;color:var(--text);margin:-10px 0 16px;
+  }
+  .active-filter-banner.show{display:flex;}
+  .active-filter-banner button{
+    background:var(--panel2);border:1px solid var(--border);border-radius:999px;
+    padding:4px 12px;font-size:11px;color:var(--text);cursor:pointer;margin-left:auto;
+  }
+  .active-filter-banner button:hover{border-color:var(--accent2);color:var(--accent2);}
+
+  .city-drill-panel{
+    display:none;flex-wrap:wrap;gap:8px;background:var(--panel);border:1px solid var(--border);
+    border-radius:var(--radius);padding:14px;margin:-10px 0 16px;
+  }
+  .city-drill-panel.open{display:flex;}
+  .city-chip{
+    background:var(--panel2);border:1px solid var(--border);border-radius:999px;
+    padding:6px 12px;font-size:12px;color:var(--muted);cursor:pointer;transition:.15s;
+  }
+  .city-chip:hover{border-color:var(--accent2);}
+  .city-chip.active{background:var(--accent2);border-color:var(--accent2);color:#0b0f14;font-weight:600;}
+  .city-chip .cnt{opacity:.75;}
+
+  .lang-status-pop{
+    display:none;position:absolute;z-index:20;top:100%;left:0;margin-top:6px;
+    background:var(--panel2);border:1px solid var(--border);border-radius:10px;
+    padding:12px 14px;font-size:12px;color:var(--text);min-width:220px;
+    box-shadow:0 8px 24px rgba(0,0,0,.35);
+  }
+  .lang-status-pop.open{display:block;}
+  .lang-status-pop .lsp-title{font-weight:700;margin-bottom:6px;}
+  .lang-status-pop .bar-track{height:6px;background:var(--panel);border-radius:999px;overflow:hidden;margin:8px 0;}
+  .lang-status-pop .bar-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:999px;}
+  .lang-status-pop .lsp-actions{display:flex;align-items:center;margin-top:10px;}
+  .lang-status-pop button{
+    background:rgba(79,209,197,.15);border:1px solid rgba(79,209,197,.4);border-radius:999px;
+    padding:5px 12px;font-size:11px;color:var(--accent);cursor:pointer;font-weight:600;
+  }
+  .lang-status-pop button:hover{background:rgba(79,209,197,.25);}
+  .lang-status-pop .lsp-close{
+    position:absolute;top:8px;right:8px;background:none;border:none;color:var(--muted);
+    font-size:12px;padding:2px 6px;cursor:pointer;
+  }
 
   .stats{
     display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
@@ -358,6 +414,7 @@
       <div class="chip lang-chip" data-lang="ve">Venda</div>
       <div class="chip lang-chip" data-lang="xh">Xhosa</div>
       <button class="btn small" id="toggleTranslatePanel" type="button">🌍 <span id="translateHelpLabel">Help translate / suggest a correction</span></button>
+      <div class="lang-status-pop" id="langStatusPop"></div>
     </div>
     <div><span class="privacy-note">🖐️ Zimbabwean Sign Language is the 16th official language recognized by the Constitution — it isn't shown as a chip here because it's a visual/gestural language, not a written one, so it doesn't fit this text-translation model. A proper accommodation (video phrasebook, interpreter-linked support line) would need its own design, not a checkbox on this list.</span></div>
   </header>
@@ -410,12 +467,14 @@
   </div>
 
   <div class="stats" id="stats"></div>
+  <div class="active-filter-banner" id="activeFilterBanner"></div>
+  <div class="city-drill-panel" id="cityDrillPanel"></div>
 
   <div class="toolbar">
     <input class="search" id="search" type="text" placeholder="Search ISPs…">
     <div class="chip active" data-filter="all"><span id="filterAllLabel">All</span></div>
     <div class="chip" data-filter="Mobile"><span id="filterMobileLabel">Mobile</span></div>
-    <div class="chip" data-filter="Fixed/Wireless"><span id="filterFixedLabel">Fixed &amp; Wireless</span></div>
+    <div class="chip" data-filter="Fixed"><span id="filterFixedLabel">Fixed &amp; Wireless</span></div>
     <div class="spacer"></div>
     <div class="btn" id="exportPdf">🖨️ <span id="btnExportPdfLabel">Export PDF Report</span></div>
     <div class="btn" id="exportCsv">📊 <span id="btnExportCsvLabel">Export ISP CSV</span></div>
@@ -1752,8 +1811,9 @@ function nearestCity(lat,lon){
   return { city: best.name, distanceKm: Math.round(bestD) };
 }
 function reportsFor(isp){ return REPORTS.filter(r=>r.isp===isp); }
-function aggregate(isp){
-  const rs = reportsFor(isp);
+function aggregate(isp, cityFilter){
+  let rs = reportsFor(isp);
+  if(cityFilter) rs = rs.filter(r=>r.city===cityFilter);
   if(rs.length===0) return {avg:null, count:0, byCity:[]};
   const avg = rs.reduce((a,r)=>a+r.stars,0)/rs.length;
   const cityMap = {};
@@ -1821,8 +1881,8 @@ function statusFor(isp, city){
   const level = downForMs >= DAY ? "down-long" : "down";
   return { level, ts: latest.ts, downSinceTs: streakStart, downForMs };
 }
-function overallStatus(isp){
-  const cities = citiesReportedFor(isp);
+function overallStatus(isp, cityFilter){
+  const cities = cityFilter ? [cityFilter] : citiesReportedFor(isp);
   let worst = null;
   cities.forEach(city=>{
     const s = statusFor(isp, city);
@@ -1875,12 +1935,12 @@ function recentStatusReportsHtml(isp){
   }).join("")}</div>`;
 }
 
-function speedReportsInWindow(isp, windowMs){
+function speedReportsInWindow(isp, windowMs, cityFilter){
   const cutoff = Date.now() - (windowMs || DAY);
-  return SPEED_REPORTS.filter(r=>r.isp===isp && r.ts >= cutoff);
+  return SPEED_REPORTS.filter(r=>r.isp===isp && r.ts >= cutoff && (!cityFilter || r.city===cityFilter));
 }
-function calibratedSpeed(isp){
-  const rs = speedReportsInWindow(isp, DAY);
+function calibratedSpeed(isp, cityFilter){
+  const rs = speedReportsInWindow(isp, DAY, cityFilter);
   if(rs.length===0) return null;
   const HALF_HOUR = 30*60*1000;
   const now = Date.now();
@@ -1909,6 +1969,21 @@ function speedTier(downloadMbps, overallAvgDown){
   if(downloadMbps >= overallAvgDown*(1+SPEED_BAND)) return "high";
   if(downloadMbps < overallAvgDown*(1-SPEED_BAND)) return "low";
   return "avg";
+}
+
+/* ---------- City drill-down helpers ---------- */
+function cityReportCounts(){
+  const counts = {};
+  REPORTS.forEach(r=>{ counts[r.city] = (counts[r.city]||0)+1; });
+  STATUS_REPORTS.forEach(r=>{ counts[r.city] = (counts[r.city]||0)+1; });
+  SPEED_REPORTS.forEach(r=>{ counts[r.city] = (counts[r.city]||0)+1; });
+  return counts;
+}
+function ispHasCityData(isp, city){
+  if(REPORTS.some(r=>r.isp===isp && r.city===city)) return true;
+  if(STATUS_REPORTS.some(r=>r.isp===isp && r.city===city)) return true;
+  if(SPEED_REPORTS.some(r=>r.isp===isp && r.city===city)) return true;
+  return false;
 }
 /* ---------- National bandwidth benchmark (live, via Cloudflare Radar) ----------
    Cloudflare Radar publishes real, live internet-quality measurements
@@ -2131,7 +2206,7 @@ async function endorseTranslation(id){
 }
 
 /* ---------- Rendering ---------- */
-let state = { filter: "all", query: "" };
+let state = { filter: "all", query: "", cityFilter: null, sortByRating: false };
 let openRows = new Set();
 
 function fmt(n){
@@ -2185,21 +2260,103 @@ function applyStaticTranslations(){
 function renderStats(){
   const confirmed = DATA.filter(d=>d.subscribers!==null).reduce((a,d)=>a+d.subscribers,0);
   const withData = DATA.filter(d=>d.subscribers!==null).length;
-  const mobile = DATA.filter(d=>d.type==="Mobile").length;
-  const fixed = DATA.filter(d=>d.type==="Fixed/Wireless").length;
+  const mobile = DATA.filter(d=>/mobile/i.test(d.type)).length;
+  const fixed = DATA.filter(d=>/fixed/i.test(d.type)).length;
   const totalReports = REPORTS.length;
   const overallAvg = totalReports ? (REPORTS.reduce((a,r)=>a+r.stars,0)/totalReports).toFixed(1) : "—";
-  const stats = [
-    {num: DATA.length, lbl: t("stat_isps")},
-    {num: fmt(confirmed), lbl:"combined confirmed subscribers"},
-    {num: withData+" / "+DATA.length, lbl:"providers with public subscriber counts"},
-    {num: mobile+" mobile · "+fixed+" fixed/wireless", lbl:"provider mix"},
-    {num: totalReports, lbl: t("stat_reports")},
-    {num: overallAvg+"★", lbl:"avg QoS across all reports"}
-  ];
-  document.getElementById("stats").innerHTML = stats.map(s=>
-    `<div class="stat"><div class="num">${s.num}</div><div class="lbl">${s.lbl}</div></div>`
-  ).join("");
+  const citiesWithData = Object.keys(cityReportCounts()).length;
+  document.getElementById("stats").innerHTML = `
+    <div class="stat clickable" data-drill="all" title="Clear filters and jump to the full provider list">
+      <div class="num">${DATA.length}</div><div class="lbl">${t("stat_isps")}</div>
+      <div class="drill-hint">↳ view all</div>
+    </div>
+    <div class="stat">
+      <div class="num">${fmt(confirmed)}</div><div class="lbl">combined confirmed subscribers</div>
+    </div>
+    <div class="stat">
+      <div class="num">${withData} / ${DATA.length}</div><div class="lbl">providers with public subscriber counts</div>
+    </div>
+    <div class="stat">
+      <div class="stat-split">
+        <span class="stat-split-item${state.filter==="Mobile"?" active":""}" data-drill-type="Mobile">${mobile}<span class="split-lbl">mobile</span></span>
+        <span class="stat-split-item${state.filter==="Fixed"?" active":""}" data-drill-type="Fixed">${fixed}<span class="split-lbl">fixed/wireless</span></span>
+      </div>
+      <div class="drill-hint">↳ click a number to filter</div>
+    </div>
+    <div class="stat clickable" data-drill="reports" title="Jump to the provider list">
+      <div class="num">${totalReports}</div><div class="lbl">${t("stat_reports")}</div>
+      <div class="drill-hint">↳ view reports</div>
+    </div>
+    <div class="stat clickable" data-drill="avg" title="Sort providers by rating">
+      <div class="num">${overallAvg}★</div><div class="lbl">avg QoS across all reports</div>
+      <div class="drill-hint">${state.sortByRating ? "↳ sorting by rating" : "↳ sort by rating"}</div>
+    </div>
+    <div class="stat clickable" data-drill="cities" title="Browse and filter by city">
+      <div class="num">${citiesWithData} / ${CITIES.length}</div><div class="lbl">cities with crowdsourced data</div>
+      <div class="drill-hint">↳ browse by city</div>
+    </div>
+  `;
+  renderCityDrillPanel();
+  renderActiveFilterBanner();
+}
+
+function renderCityDrillPanel(){
+  const panel = document.getElementById("cityDrillPanel");
+  const counts = cityReportCounts();
+  const chips = [`<div class="city-chip${!state.cityFilter?" active":""}" data-city="">All cities</div>`]
+    .concat(CITIES.map(c=>{
+      const n = counts[c.name] || 0;
+      return `<div class="city-chip${state.cityFilter===c.name?" active":""}" data-city="${c.name}">${c.name}${n?` <span class="cnt">(${n})</span>`:""}</div>`;
+    }));
+  panel.innerHTML = chips.join("");
+}
+
+function renderActiveFilterBanner(){
+  const banner = document.getElementById("activeFilterBanner");
+  const parts = [];
+  if(state.filter!=="all") parts.push(`type: <strong>${state.filter==="Mobile"?"Mobile":"Fixed &amp; Wireless"}</strong>`);
+  if(state.cityFilter) parts.push(`city: <strong>${state.cityFilter}</strong>`);
+  if(state.sortByRating) parts.push(`sorted by <strong>rating</strong>`);
+  if(parts.length===0){ banner.classList.remove("show"); banner.innerHTML=""; return; }
+  banner.classList.add("show");
+  banner.innerHTML = `<span>🔎 Showing ${parts.join(" · ")}</span><button id="clearDrillFilters" type="button">Clear</button>`;
+}
+
+function langCompleteness(code){
+  const total = Object.keys(I18N.en).length;
+  if(code==="en") return { filled: total, total };
+  const obj = I18N[code] || {};
+  const filled = Object.keys(obj).filter(k=>obj[k]).length;
+  return { filled, total };
+}
+function showLangStatusPop(code, chipEl){
+  const pop = document.getElementById("langStatusPop");
+  if(!pop) return;
+  const name = LANG_NAMES[code] || code;
+  const { filled, total } = langCompleteness(code);
+  const pct = Math.round((filled/total)*100);
+  let statusLine;
+  if(code==="en") statusLine = "Source language — always complete.";
+  else if(filled===0) statusLine = "Still blank, on purpose — be the first to translate this language.";
+  else if(filled===total) statusLine = "Full best-effort draft shipped, unreviewed.";
+  else statusLine = "Partial best-effort draft, unreviewed.";
+  pop.innerHTML = `
+    <button class="lsp-close" type="button" aria-label="Close">✕</button>
+    <div class="lsp-title">${name}</div>
+    <div>${filled} / ${total} strings translated (${pct}%)</div>
+    <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+    <div>${statusLine}</div>
+    ${code!=="en" ? `<div class="lsp-actions"><span></span><button type="button" data-open-translate="${code}">Help translate →</button></div>` : ""}
+  `;
+  if(chipEl){
+    pop.style.left = chipEl.offsetLeft + "px";
+    pop.style.top = (chipEl.offsetTop + chipEl.offsetHeight + 6) + "px";
+  }
+  pop.classList.add("open");
+}
+function hideLangStatusPop(){
+  const pop = document.getElementById("langStatusPop");
+  if(pop) pop.classList.remove("open");
 }
 
 /* ---------- Referral / affiliate links (monetization) ----------
@@ -2378,16 +2535,28 @@ function openBenchmarkReport(ispName){
 function renderList(){
   const q = state.query.trim().toLowerCase();
   let rows = DATA.filter(d=>{
-    if(state.filter!=="all" && d.type!==state.filter) return false;
+    if(state.filter!=="all" && !new RegExp(state.filter,"i").test(d.type)) return false;
+    if(state.cityFilter && !ispHasCityData(d.name, state.cityFilter)) return false;
     if(q && !d.name.toLowerCase().includes(q)) return false;
     return true;
   });
-  rows = rows.slice().sort((a,b)=>{
-    if(a.subscribers===null && b.subscribers===null) return 0;
-    if(a.subscribers===null) return 1;
-    if(b.subscribers===null) return -1;
-    return b.subscribers - a.subscribers;
-  });
+  if(state.sortByRating){
+    rows = rows.slice().sort((a,b)=>{
+      const av = aggregate(a.name, state.cityFilter).avg;
+      const bv = aggregate(b.name, state.cityFilter).avg;
+      if(av===null && bv===null) return 0;
+      if(av===null) return 1;
+      if(bv===null) return -1;
+      return bv - av;
+    });
+  } else {
+    rows = rows.slice().sort((a,b)=>{
+      if(a.subscribers===null && b.subscribers===null) return 0;
+      if(a.subscribers===null) return 1;
+      if(b.subscribers===null) return -1;
+      return b.subscribers - a.subscribers;
+    });
+  }
 
   const list = document.getElementById("list");
   if(rows.length===0){
@@ -2400,19 +2569,19 @@ function renderList(){
 
   list.innerHTML = rows.map((d,i)=>{
     const rank = d.subscribers!==null ? (i+1) : "–";
-    const qos = aggregate(d.name);
+    const qos = aggregate(d.name, state.cityFilter);
     const isOpen = openRows.has(d.name);
     const cityBars = qos.byCity.length ? `<div class="city-bars">${qos.byCity.map(c=>{
         const pct = Math.max(6, Math.round((c.count/qos.count)*100));
         return `<div class="city-bar-row"><span class="city-name">${c.city}</span><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div><span class="city-meta">${c.avg.toFixed(1)}★ · ${c.count}</span></div>`;
-      }).join("")}</div>` : "";
+      }).join("")}</div>` : (state.cityFilter ? `<div class="empty-note" style="margin-bottom:12px;">No ratings yet for ${state.cityFilter}.</div>` : "");
     const convCount = convAgg.byIsp[d.name] || 0;
     const impactBadge = convCount ? `<div class="impact-badge">${t("impact_badge").replace("{n}", convCount)}</div>` : "";
-    const ov = overallStatus(d.name);
+    const ov = overallStatus(d.name, state.cityFilter);
     const rowStatusDot = ov
       ? `<span class="status-dot" style="background:${STATUS_META[ov.level].color}" title="${STATUS_META[ov.level].label}"></span>`
       : `<span class="status-dot status-dot-empty" title="No status reports yet"></span>`;
-    const speedCalib = calibratedSpeed(d.name);
+    const speedCalib = calibratedSpeed(d.name, state.cityFilter);
     const speedTierVal = speedCalib ? speedTier(speedCalib.downloadMbps, speedAgg.overallAvgDown) : null;
     const speedTierMeta = speedTierVal ? SPEED_TIER_META[speedTierVal] : null;
     const speedSummaryHtml = speedCalib
@@ -2900,13 +3069,62 @@ document.getElementById("search").addEventListener("input", (e)=>{
   renderList();
 });
 
+function setTypeFilter(val){
+  state.filter = val;
+  document.querySelectorAll(".chip[data-filter]").forEach(c=>c.classList.toggle("active", c.getAttribute("data-filter")===val));
+  renderAll();
+}
+function scrollToList(){
+  const list = document.getElementById("list");
+  if(list && list.scrollIntoView) list.scrollIntoView({behavior:"smooth", block:"start"});
+}
 document.querySelectorAll(".chip[data-filter]").forEach(chip=>{
-  chip.addEventListener("click", ()=>{
-    document.querySelectorAll(".chip[data-filter]").forEach(c=>c.classList.remove("active"));
-    chip.classList.add("active");
-    state.filter = chip.getAttribute("data-filter");
-    renderList();
-  });
+  chip.addEventListener("click", ()=>{ setTypeFilter(chip.getAttribute("data-filter")); });
+});
+
+document.getElementById("stats").addEventListener("click", (e)=>{
+  const typeEl = e.target.closest("[data-drill-type]");
+  if(typeEl){
+    const val = typeEl.getAttribute("data-drill-type");
+    setTypeFilter(state.filter===val ? "all" : val);
+    scrollToList();
+    return;
+  }
+  const drillEl = e.target.closest("[data-drill]");
+  if(!drillEl) return;
+  const kind = drillEl.getAttribute("data-drill");
+  if(kind==="all"){
+    state.filter = "all"; state.cityFilter = null; state.sortByRating = false; state.query = "";
+    const search = document.getElementById("search");
+    if(search) search.value = "";
+    document.querySelectorAll(".chip[data-filter]").forEach(c=>c.classList.toggle("active", c.getAttribute("data-filter")==="all"));
+    document.getElementById("cityDrillPanel").classList.remove("open");
+    renderAll();
+    scrollToList();
+  } else if(kind==="reports"){
+    scrollToList();
+  } else if(kind==="avg"){
+    state.sortByRating = !state.sortByRating;
+    renderAll();
+    scrollToList();
+  } else if(kind==="cities"){
+    document.getElementById("cityDrillPanel").classList.toggle("open");
+  }
+});
+document.getElementById("cityDrillPanel").addEventListener("click", (e)=>{
+  const chip = e.target.closest(".city-chip");
+  if(!chip) return;
+  const city = chip.getAttribute("data-city");
+  state.cityFilter = city || null;
+  document.getElementById("cityDrillPanel").classList.remove("open");
+  renderAll();
+  scrollToList();
+});
+document.getElementById("activeFilterBanner").addEventListener("click", (e)=>{
+  if(e.target.id !== "clearDrillFilters") return;
+  state.filter = "all"; state.cityFilter = null; state.sortByRating = false;
+  document.querySelectorAll(".chip[data-filter]").forEach(c=>c.classList.toggle("active", c.getAttribute("data-filter")==="all"));
+  renderAll();
 });
 
 document.querySelectorAll(".lang-chip").forEach(chip=>{
@@ -2914,7 +3132,27 @@ document.querySelectorAll(".lang-chip").forEach(chip=>{
     currentLang = chip.getAttribute("data-lang");
     try{ localStorage.setItem("zw_isp_lang", currentLang); }catch(e){}
     renderAll();
+    showLangStatusPop(currentLang, chip);
   });
+});
+document.getElementById("langStatusPop").addEventListener("click", (e)=>{
+  if(e.target.classList.contains("lsp-close")){ hideLangStatusPop(); return; }
+  const openBtn = e.target.closest("[data-open-translate]");
+  if(openBtn){
+    const code = openBtn.getAttribute("data-open-translate");
+    hideLangStatusPop();
+    document.getElementById("translatePanel").style.display = "block";
+    const sel = document.getElementById("suggestLang");
+    if(sel){ sel.value = code; }
+    renderTranslatePanel();
+    document.getElementById("translatePanel").scrollIntoView({behavior:"smooth", block:"start"});
+  }
+});
+document.addEventListener("click", (e)=>{
+  const pop = document.getElementById("langStatusPop");
+  if(!pop.classList.contains("open")) return;
+  if(pop.contains(e.target) || e.target.closest(".lang-chip")) return;
+  hideLangStatusPop();
 });
 
 document.getElementById("toggleTranslatePanel").addEventListener("click", ()=>{
