@@ -332,6 +332,7 @@
     <div><span class="privacy-note">📍 Your GPS location is only used in your browser to work out the nearest tracked city — raw coordinates are never sent anywhere. Only the city name, star rating and comment are shared.</span></div>
     <div><span class="privacy-note">📱 On an older phone, a dot-matrix screen, or a slow connection? <a href="lite.html" style="color:inherit;">Try the no-script Lite version</a> — tiny download, works without JavaScript, includes an SMS rating option.</span></div>
     <div><span class="backend-banner mode-local" id="backendBanner">🟡 Local demo mode — connect a free Supabase backend to make ratings shared (see README.md)</span></div>
+    <div id="iodaBadge"></div>
     <div class="status-legend" id="statusLegend">
       <span class="legend-item"><span class="status-dot" style="background:var(--green)"></span> <span id="legendLiveLabel">Live</span></span>
       <span class="legend-item"><span class="status-dot" style="background:var(--yellow)"></span> <span id="legendPartialLabel">Partial</span></span>
@@ -345,21 +346,41 @@
       <div class="chip lang-chip" data-lang="sn">ChiShona</div>
       <div class="chip lang-chip" data-lang="nd">IsiNdebele</div>
       <div class="chip lang-chip" data-lang="kck">TjiKalanga</div>
+      <div class="chip lang-chip" data-lang="ny">Chewa</div>
+      <div class="chip lang-chip" data-lang="bwg">Chibarwe</div>
+      <div class="chip lang-chip" data-lang="tjw">Khoisan (Tjwao)</div>
+      <div class="chip lang-chip" data-lang="nmq">Nambya</div>
+      <div class="chip lang-chip" data-lang="ndc">Ndau</div>
+      <div class="chip lang-chip" data-lang="ts">Shangani</div>
+      <div class="chip lang-chip" data-lang="st">Sotho</div>
+      <div class="chip lang-chip" data-lang="toi">Tonga</div>
+      <div class="chip lang-chip" data-lang="tn">Tswana</div>
+      <div class="chip lang-chip" data-lang="ve">Venda</div>
+      <div class="chip lang-chip" data-lang="xh">Xhosa</div>
       <button class="btn small" id="toggleTranslatePanel" type="button">🌍 <span id="translateHelpLabel">Help translate / suggest a correction</span></button>
     </div>
+    <div><span class="privacy-note">🖐️ Zimbabwean Sign Language is the 16th official language recognized by the Constitution — it isn't shown as a chip here because it's a visual/gestural language, not a written one, so it doesn't fit this text-translation model. A proper accommodation (video phrasebook, interpreter-linked support line) would need its own design, not a checkbox on this list.</span></div>
   </header>
 
   <div class="translate-panel" id="translatePanel" style="display:none;">
     <div class="panel-head">
       <div class="qos-title">🌍 Community translation</div>
       <div class="lexicon-note">
-        Baseline ChiShona and IsiNdebele UI text here is a first draft, not yet reviewed by native speakers — treat it as a starting point.
-        TjiKalanga has intentionally been left blank rather than guessed, since it's a lower-resourced language.
-        Suggest corrections below; once a suggestion gets 2 community endorsements it's promoted to "verified" and goes live automatically.
-        Oxford and Cambridge don't currently publish ChiShona / IsiNdebele / TjiKalanga dictionaries, so please cross-check suggestions against
+        Zimbabwe's 2013 Constitution (Section 6) recognizes 16 official languages: English, ChiShona, IsiNdebele, TjiKalanga, Chewa, Chibarwe,
+        Khoisan, Nambya, Ndau, Shangani, Sotho, Tonga, Tswana, Venda, Xhosa and Zimbabwean Sign Language. This tracker offers all 15 of those that
+        are text-based (Sign Language isn't — see the note below the language row). ChiShona, IsiNdebele, Setswana, Chewa, Shangani, Sotho,
+        Venda and Xhosa ship with a best-effort draft translation of every UI string — none reviewed by a native speaker yet, treat it as a
+        starting point. TjiKalanga and Tonga also ship a draft, but at lower confidence than the others — please prioritize reviewing those
+        two. Chibarwe, Khoisan (Tjwao), Nambya and Ndau are intentionally still blank rather than guessed: this project doesn't have
+        reliable enough source material to draft those four responsibly (Tjwao in particular has fewer than 10 living speakers and no
+        published lexicon). Suggest corrections below for any of the 15; once a suggestion gets 2 community endorsements it's
+        promoted to "verified" and goes live automatically. Oxford and Cambridge don't currently publish dictionaries for most of these
+        languages, so please cross-check suggestions against
         <a href="https://www.alri.uz.ac.zw/" target="_blank" rel="noopener">ALRI</a> (African Languages Research Institute, University of Zimbabwe) — the
-        <em>Duramazwi Guru reChiShona</em> and <em>Isichazamazwi SesiNdebele</em> dictionaries — plus Hannan's <em>Standard Shona Dictionary</em> and open
-        lexical resources like <a href="https://panlex.org" target="_blank" rel="noopener">PanLex</a> or Wiktionary where available.
+        <em>Duramazwi Guru reChiShona</em> and <em>Isichazamazwi SesiNdebele</em> dictionaries — plus Hannan's <em>Standard Shona Dictionary</em>,
+        South Africa's PanSALB resources for Sotho/Tswana/Venda/Xhosa, and open lexical resources like
+        <a href="https://panlex.org" target="_blank" rel="noopener">PanLex</a> or Wiktionary where available. A native speaker's judgment always
+        beats any dictionary here — this project doesn't claim these sources are authoritative for every language listed.
       </div>
     </div>
     <div class="translate-form">
@@ -367,6 +388,17 @@
         <option value="sn">ChiShona</option>
         <option value="nd">IsiNdebele</option>
         <option value="kck">TjiKalanga</option>
+        <option value="ny">Chewa</option>
+        <option value="bwg">Chibarwe</option>
+        <option value="tjw">Khoisan (Tjwao)</option>
+        <option value="nmq">Nambya</option>
+        <option value="ndc">Ndau</option>
+        <option value="ts">Shangani</option>
+        <option value="st">Sotho</option>
+        <option value="toi">Tonga</option>
+        <option value="tn">Tswana</option>
+        <option value="ve">Venda</option>
+        <option value="xh">Xhosa</option>
       </select>
       <select id="suggestKey" class="city-select"></select>
       <div id="suggestCurrent" class="sync-note" style="grid-column:1 / -1;"></div>
@@ -700,9 +732,568 @@ const I18N = {
     speed_no_recent_any: "Akukho kuhlolwa kwejubane okubikiwe emahoreni angu-24 edlulileyo.",
     speed_no_recent: "Akukho datha yakamuva (24h)"
   },
-  kck: {} // TjiKalanga — deliberately empty; fill in via the translation panel
+  kck: { // best-effort draft, unreviewed — LOWER confidence than sn/nd/tn, please prioritize native-speaker review (see README)
+    lang_label: "Mulaka",
+    translate_help: "Batsira kubudulula / nyika kulungiswa",
+    banner_local: "🟡 Modhi yekumusha — bhatanidza Supabase (mahala) kuti dhata igovanwe (ona README.md)",
+    banner_connecting: "⏳ Kubhatana ne network inogovanwa…",
+    banner_live: "🟢 Yabhatana — dhata inogovanwa nevaeni vose (Supabase)",
+    banner_error: "🔴 Kwakundikana kusvika ku network inogovanwa — kuratidza dhata yakachengetwa mubhurawuza iyi bedzi",
+    search_placeholder: "Tsvaga vapi ve inthanete…",
+    filter_all: "Zvose",
+    filter_mobile: "Foni",
+    filter_fixed: "Yakabhatana & isina waya",
+    btn_export_pdf: "Bhudisa Ripoti ye PDF",
+    btn_export_csv: "Bhudisa CSV ye Vapi",
+    btn_export_qos: "Bhudisa CSV ye QoS",
+    btn_export_epub: "Bhudisa EPUB",
+    qos_title: "Hunhu hwe Basa — unobva kuvanhu",
+    btn_rate: "Nyika mupi uyu maratingi",
+    your_rating: "Maratingi ako",
+    btn_use_location: "Shandisa nzvimbo yangu",
+    city_manual: "…kana sarudza guta pachako",
+    comment_placeholder: "Hazvidikanwi: tsanangura zvawakaona (rubvilo, kuvimbika, kudzimwa kwe network)…",
+    btn_submit_rating: "Tumira Maratingi",
+    no_ratings_yet: "Hakuna maratingi zvino",
+    no_reports_yet: "Hakuna zvirevo zvino — iva wekutanga kupa mupi uyu maratingi.",
+    sync_shared: "inogovanwa nevaeni vose",
+    sync_local: "yakachengetwa mubhurawuza iyi bedzi",
+    impact_badge: "🎉 Vanhu ve {n} vakati vakachinja kana kuregista ku mupi uyu mushure mekushandisa tracker iyi.",
+    impact_title: "Wakachinja kana wakaregista nekuda kwezvawakawana pano?",
+    impact_sub: "Tiudzei — izvi zvinoratidza kuti ndevapi vapi vari kuwana vatengi nekuda kwekuvimbika ne rutsigiro, kwete mutengo bedzi.",
+    impact_new_isp: "Mupi mutswa / wawakasarudza",
+    impact_prev_isp: "Mupi wekutanga (hazvidikanwi)",
+    impact_reasons: "Sei wakachinja?",
+    reason_reliability: "Kuvimbika",
+    reason_support: "Rutsigiro rwevatengi",
+    reason_price: "Mutengo",
+    reason_speed: "Rubvilo",
+    reason_coverage: "Kusvika kwe network",
+    reason_other: "Zvimwe",
+    btn_submit_story: "Tumira",
+    footer_note1: "Bhaya mutsara kuti uuwedzere",
+    footer_note2: "bhaya chidhodha chemamiriro kuti chitenderere kubva ku confirmed kuenda ku estimated kuenda ku unconfirmed · tsvaga uye sarudza kumusoro",
+    reset_link: "vandudza / dzosera dhata yepano",
+    stat_isps: "Vapi vari kulaviridzwa",
+    stat_reports: "Zvirevo ze QoS zvinobva kuvanhu",
+    stat_conversions: "Kuchinja/kuregista kwakarehwa",
+    live_status_title: "Mamiriro Ezvino — akarehwa nevashandisi",
+    report_status: "Reva mamiriro ezvino",
+    status_live: "Iri kushanda",
+    status_partial: "Chidimbu",
+    status_down: "Hairi kushanda",
+    status_down_long: "Hairi kushanda kwenguva refu (24h+)",
+    no_status_yet: "Hakuna mamiriro akarehwa zvino — iva wekutanga kureva.",
+    btn_submit_status: "Tumira Mamiriro",
+    btn_export_status: "Bhudisa CSV ye Mamiriro",
+    bandwidth_title: "Rubvilo rwe Network — maawa 24 apfuura, anobva kuvanhu",
+    report_speed: "Reva kuedza kwerubvilo",
+    download_label: "Download (Mbps)",
+    upload_label: "Upload (Mbps)",
+    btn_submit_speed: "Tumira Kuedza Kwerubvilo",
+    btn_export_speed: "Bhudisa CSV yerubvilo",
+    no_speed_data: "Hakuna kuedza kwerubvilo kwakarehwa mumaawa 24 apfuura",
+    no_speed_reports_yet: "Hakuna kuedza kwerubvilo kwakarehwa zvino — iva wekutanga.",
+    speed_ranking_title: "Rubvilo rwe Network — rwakarongwa, maawa 24",
+    speed_ranking_sub: "Zvinobva mukuedza kwerubvilo kwakapihwa nevanhu: mhinduro dzinoiswa mumapoka emaminitsi 30 mumaawa 24 apfuura ozoenzaniswa poka nepoka, kuti zvirevo zvizhinji nguva imwe zvirege kushandura nhamba. Green = kumusoro kweavhareji yevapi vose, yellow = pedyo neavhareji, red = pasi peavhareji.",
+    stat_speed_isps: "Vapi vane dhata yerubvilo (24h)",
+    stat_speed_reports: "Zvirevo zverubvilo (mumaawa 24)",
+    speed_no_recent_any: "Hakuna kuedza kwerubvilo kwakarehwa mumaawa 24 apfuura.",
+    speed_no_recent: "Hakuna dhata yechinguva chino (24h)"
+  },
+  ny: { // best-effort draft, unreviewed (same status as ChiShona/IsiNdebele — see README)
+    lang_label: "Chinenero",
+    translate_help: "Thandizani kumasulira / perekani kukonzedwa",
+    banner_local: "🟡 Njira yakomweko — lumikizani ndi Supabase (yaulere) kuti deta igawidwe (onani README.md)",
+    banner_connecting: "⏳ Kulumikizana ndi netiweki yogawana…",
+    banner_live: "🟢 Yalumikizidwa — deta ikugawidwa ndi alendo onse (Supabase)",
+    banner_error: "🔴 Zalephera kufikira netiweki yogawana — kukuonetsa deta yosungidwa mu bulawuza iyi yokha",
+    search_placeholder: "Sakani opereka intaneti…",
+    filter_all: "Zonse",
+    filter_mobile: "Foni",
+    filter_fixed: "Yolumikizidwa & Yopanda Waya",
+    btn_export_pdf: "Tulutsani Lipoti ya PDF",
+    btn_export_csv: "Tulutsani CSV ya Opereka",
+    btn_export_qos: "Tulutsani CSV ya QoS",
+    btn_export_epub: "Tulutsani EPUB",
+    qos_title: "Ubwino wa Ntchito — wochokera kwa anthu",
+    btn_rate: "Perekani mfundo kwa opereka uyu",
+    your_rating: "Mfundo zanu",
+    btn_use_location: "Gwiritsani ntchito malo anga",
+    city_manual: "…kapena sankhani mzinda nokha",
+    comment_placeholder: "Osakakamiza: fotokozani zomwe mudakumana nazo (liwiro, kukhulupirika, kudula kwa netiweki)…",
+    btn_submit_rating: "Tumizani Mfundo",
+    no_ratings_yet: "Palibe mfundo pakadali pano",
+    no_reports_yet: "Palibe malipoti pakadali pano — khalani woyamba kupereka mfundo kwa opereka uyu.",
+    sync_shared: "zikugawidwa ndi alendo onse",
+    sync_local: "zasungidwa mu bulawuza iyi yokha",
+    impact_badge: "🎉 Anthu {n} anena kuti asintha kapena kulembetsa kwa opereka uyu atagwiritsa ntchito tracker iyi.",
+    impact_title: "Munasintha kapena kulembetsa chifukwa cha zomwe mudapeza pano?",
+    impact_sub: "Tiuzeni — izi zikuwonetsa opereka amene akupambana makasitomala chifukwa cha kukhulupirika ndi thandizo, osati mtengo wokha.",
+    impact_new_isp: "Opereka Watsopano / Amene Musankha",
+    impact_prev_isp: "Opereka Wakale (osakakamiza)",
+    impact_reasons: "Chifukwa chiyani munasintha?",
+    reason_reliability: "Kukhulupirika",
+    reason_support: "Thandizo la makasitomala",
+    reason_price: "Mtengo",
+    reason_speed: "Liwiro",
+    reason_coverage: "Kufikira kwa netiweki",
+    reason_other: "Zina",
+    btn_submit_story: "Tumizani",
+    footer_note1: "Dinani mzere kuti muwuone bwino",
+    footer_note2: "dinani chizindikiro cha mkhalidwe kuti muzungulire kuchoka pa confirmed kupita ku estimated kupita ku unconfirmed · sakani ndi kusankha pamwambapa",
+    reset_link: "konzaninso / bwezerani deta ya pano",
+    stat_isps: "Opereka omwe akutsatiridwa",
+    stat_reports: "Malipoti a QoS ochokera kwa anthu",
+    stat_conversions: "Kusintha/kulembetsa komwe kwaneneka",
+    live_status_title: "Mkhalidwe wa Pano — wonenedwa ndi ogwiritsa ntchito",
+    report_status: "Nenani mkhalidwe wapano",
+    status_live: "Ikugwira ntchito",
+    status_partial: "Pang'ono",
+    status_down: "Sikugwira ntchito",
+    status_down_long: "Sikugwira ntchito kwa nthawi yaitali (24h+)",
+    no_status_yet: "Palibe mkhalidwe wonenedwa pakadali pano — khalani woyamba kunena.",
+    btn_submit_status: "Tumizani Mkhalidwe",
+    btn_export_status: "Tulutsani CSV ya Mkhalidwe",
+    bandwidth_title: "Liwiro la Netiweki — maola 24 apitawa, ochokera kwa anthu",
+    report_speed: "Nenani kuyesa kwa liwiro",
+    download_label: "Download (Mbps)",
+    upload_label: "Upload (Mbps)",
+    btn_submit_speed: "Tumizani Kuyesa kwa Liwiro",
+    btn_export_speed: "Tulutsani CSV ya Liwiro",
+    no_speed_data: "Palibe kuyesa kwa liwiro kwanenedwa mu maola 24 apitawa",
+    no_speed_reports_yet: "Palibe kuyesa kwa liwiro kwanenedwa pakadali pano — khalani woyamba.",
+    speed_ranking_title: "Liwiro la Netiweki — lolamulidwa, maola 24",
+    speed_ranking_sub: "Zochokera ku kuyesa kwa liwiro komwe kwaperekedwa ndi anthu: zotsatira zimaikidwa m'magulu a mphindi 30 mu maola 24 apitawa ndikuwerengedwa gulu ndi gulu, kotero kuti malipoti ambiri panthawi imodzi asasokoneze nambala. Green = pamwamba pa avareji ya opereka onse, yellow = pafupi ndi avareji, red = pansi pa avareji.",
+    stat_speed_isps: "Opereka omwe ali ndi deta ya liwiro (24h)",
+    stat_speed_reports: "Malipoti a liwiro (mu maola 24)",
+    speed_no_recent_any: "Palibe kuyesa kwa liwiro kwanenedwa mu maola 24 apitawa.",
+    speed_no_recent: "Palibe deta yaposachedwa (24h)"
+  },
+  bwg: {}, // Chibarwe — deliberately empty; fill in via the translation panel
+  tjw: {}, // Khoisan (Tjwao) — deliberately empty; fill in via the translation panel
+  nmq: {}, // Nambya — deliberately empty; fill in via the translation panel
+  ndc: {}, // Ndau — deliberately empty; fill in via the translation panel
+  ts: { // best-effort draft, unreviewed (same status as ChiShona/IsiNdebele — see README)
+    lang_label: "Ririmi",
+    translate_help: "Pfuna ku hundzuluxa / nyika nhlamuselo leyi lulamisiweke",
+    banner_local: "🟡 Muxaka wa laha kaya — hlanganisa Supabase (mahala) leswaku vuxokoxoko byi avelana (vona README.md)",
+    banner_connecting: "⏳ Ya hlanganisa na network leyi avelanaka…",
+    banner_live: "🟢 Yi hlanganisiwile — vuxokoxoko byi avelana na vaendzi hinkwavo (Supabase)",
+    banner_error: "🔴 Swi tsandzekile ku fikelela network leyi avelanaka — swi kombisa vuxokoxoko lebyi hlayisiweke eka bulawuza leyi ntsena",
+    search_placeholder: "Lava vaphakeri va inthanete…",
+    filter_all: "Hinkwaswo",
+    filter_mobile: "Foni",
+    filter_fixed: "Leyi hlanganisiweke & Ku hava tinguvu",
+    btn_export_pdf: "Humesa Riphothi ra PDF",
+    btn_export_csv: "Humesa CSV ya Vaphakeri",
+    btn_export_qos: "Humesa CSV ya QoS",
+    btn_export_epub: "Humesa EPUB",
+    qos_title: "Ntiyiso wa Ntirho — lowu humaka eka vanhu",
+    btn_rate: "Nyika muphakeri loyi mavondzo",
+    your_rating: "Mavondzo ya wena",
+    btn_use_location: "Tirhisa ndhawu ya mina",
+    city_manual: "…kumbe hlawula muti hi xiyexe",
+    comment_placeholder: "A hi swa nkoka: hlamusela mintokoto ya wena (rivilo, ku tshembeka, ku hela ka network)…",
+    btn_submit_rating: "Rhumela Mavondzo",
+    no_ratings_yet: "A ku na mavondzo sweswi",
+    no_reports_yet: "A ku na swiviko sweswi — va wo sungula ku nyika muphakeri loyi mavondzo.",
+    sync_shared: "yi avelana na vaendzi hinkwavo",
+    sync_local: "yi hlayisiwile eka bulawuza leyi ntsena",
+    impact_badge: "🎉 Vanhu va {n} va vike leswaku va hundzukele eka muphakeri loyi kumbe va tsarisile endzhaku ka ku tirhisa tracker leyi.",
+    impact_title: "Xana u hundzukile kumbe u tsarisile hikwalaho ka leswi u swi kumeke laha?",
+    impact_sub: "Hi byela — leswi swi kombisa leswaku i muphakeri muni loyi a hlulaka vaxavi hikwalaho ka ku tshembeka na nseketelo, ku nga ri ntsengo ntsena.",
+    impact_new_isp: "Muphakeri lontshwa / lowu u n'wi hlawuleke",
+    impact_prev_isp: "Muphakeri wo sungula (a hi swa nkoka)",
+    impact_reasons: "Ha yini u hundzukile?",
+    reason_reliability: "Ku tshembeka",
+    reason_support: "Nseketelo wa vaxavi",
+    reason_price: "Ntsengo",
+    reason_speed: "Rivilo",
+    reason_coverage: "Ku fikelela ka network",
+    reason_other: "Swin'wana",
+    btn_submit_story: "Rhumela",
+    footer_note1: "Chukumita nkoka leswaku wu wu kula",
+    footer_note2: "chukumita xikombiso xin'wana ni xin'wana xa xiyimo leswaku xi rhendzeleka ku suka eka confirmed ku ya eka estimated ku ya eka unconfirmed · lava naswona hlawula laha henhla",
+    reset_link: "antswisa / vuyisela vuxokoxoko bya laha",
+    stat_isps: "Vaphakeri lava landzeleriwaka",
+    stat_reports: "Swiviko swa QoS leswi humaka eka vanhu",
+    stat_conversions: "Ku hundzuka/ku tsarisa leswi vikiweke",
+    live_status_title: "Xiyimo xa Sweswi — lexi vikiwaka hi vatirhisi",
+    report_status: "Vika xiyimo xa sweswi",
+    status_live: "Yi tirha",
+    status_partial: "Xiphemu",
+    status_down: "A yi tirhi",
+    status_down_long: "A yi tirhi nkarhi wo leha (24h+)",
+    no_status_yet: "A ku na swiyimo leswi vikiweke sweswi — va wo sungula ku vika.",
+    btn_submit_status: "Rhumela Xiyimo",
+    btn_export_status: "Humesa CSV ya Xiyimo",
+    bandwidth_title: "Rivilo ra Network — tiawara ta 24 leti hundzeke, leti humaka eka vanhu",
+    report_speed: "Vika ndzingo wa rivilo",
+    download_label: "Download (Mbps)",
+    upload_label: "Upload (Mbps)",
+    btn_submit_speed: "Rhumela Ndzingo wa Rivilo",
+    btn_export_speed: "Humesa CSV ya Rivilo",
+    no_speed_data: "A ku na tindzingo ta rivilo leti vikiweke eka tiawara ta 24 leti hundzeke",
+    no_speed_reports_yet: "A ku na tindzingo ta rivilo leti vikiweke sweswi — va wo sungula.",
+    speed_ranking_title: "Rivilo ra Network — leri hlawuriweke, tiawara ta 24",
+    speed_ranking_sub: "Swi huma eka tindzingo ta rivilo leti nyikeriweke hi vanhu: mbuyelo yi vekiwa eka mintlawa ya timinete ta 30 eka tiawara ta 24 leti hundzeke kutani yi hlayiwa ntlawa hi ntlawa, leswaku swiviko swo tala hi nkarhi wun'we swi nga cinci nomboro. Green = ehenhla ka average ya vaphakeri hinkwavo, yellow = ekusuhi na average, red = ehansi ka average.",
+    stat_speed_isps: "Vaphakeri lava nga na vuxokoxoko bya rivilo (24h)",
+    stat_speed_reports: "Swiviko swa rivilo (eka tiawara ta 24)",
+    speed_no_recent_any: "A ku na tindzingo ta rivilo leti vikiweke eka tiawara ta 24 leti hundzeke.",
+    speed_no_recent: "A ku na vuxokoxoko byo pfhukela (24h)"
+  },
+  st: { // best-effort draft, unreviewed (same status as ChiShona/IsiNdebele — see README)
+    lang_label: "Puo",
+    translate_help: "Thusa ho fetolela / fana ka tokiso",
+    banner_local: "🟡 Mokgwa wa lehae — hokela Supabase (mahala) hore data e arolelanwe (bona README.md)",
+    banner_connecting: "⏳ E hokela le network e arolelanwang…",
+    banner_live: "🟢 E hokahane — data e arolelanwa le baeti bohle (Supabase)",
+    banner_error: "🔴 Ho hlolehile ho fihlella network e arolelanwang — ho bontsha data e bolokilweng ho browser ena feela",
+    search_placeholder: "Batla babaki ba inthanete…",
+    filter_all: "Tsohle",
+    filter_mobile: "Founu",
+    filter_fixed: "E hokahantsweng & Ntle ho terata",
+    btn_export_pdf: "Ntsha Tlaleho ya PDF",
+    btn_export_csv: "Ntsha CSV ya Babaki",
+    btn_export_qos: "Ntsha CSV ya QoS",
+    btn_export_epub: "Ntsha EPUB",
+    qos_title: "Boleng ba Tshebeletso — bo tswang ho batho",
+    btn_rate: "Fana ka maemo ho mofani enwa",
+    your_rating: "Maemo a hao",
+    btn_use_location: "Sebedisa sebaka sa ka",
+    city_manual: "…kapa kgetha toropo ka bowena",
+    comment_placeholder: "Hase bohlokwa: hlalosa boiphihlelo ba hao (lebelo, botshepehi, ho kgaotseha ha network)…",
+    btn_submit_rating: "Romela Maemo",
+    no_ratings_yet: "Ha ho na maemo hajwale",
+    no_reports_yet: "Ha ho na ditlaleho hajwale — eba wa pele ho fa mofani enwa maemo.",
+    sync_shared: "e arolelanwa le baeti bohle",
+    sync_local: "e bolokilwe ho browser ena feela",
+    impact_badge: "🎉 Batho ba {n} ba tlalehile hore ba fetohetse ho mofani enwa kapa ba ingodisitse ka mora ho sebedisa tracker ena.",
+    impact_title: "O fetohile kapa wa ingodisa ka lebaka la seo o se fumaneng mona?",
+    impact_sub: "Re bolelle — sena se bontsha hore ke bafani bafe ba fumanang bareki ka lebaka la botshepehi le tshehetso, e seng theko feela.",
+    impact_new_isp: "Mofani o motjha / eo o mo kgethileng",
+    impact_prev_isp: "Mofani wa pele (hase bohlokwa)",
+    impact_reasons: "Ke hobaneng o fetohile?",
+    reason_reliability: "Botshepehi",
+    reason_support: "Tshehetso ya bareki",
+    reason_price: "Theko",
+    reason_speed: "Lebelo",
+    reason_coverage: "Ho fihlella ha network",
+    reason_other: "Tse ding",
+    btn_submit_story: "Romela",
+    footer_note1: "Tobetsa mola ho o godisa",
+    footer_note2: "tobetsa leswao la boemo hore le fetohe ho tswa ho confirmed ho ya ho estimated ho ya ho unconfirmed · batla le ho kgetha ka hodimo",
+    reset_link: "ntjhafatsa / khutlisetsa data ya mona",
+    stat_isps: "Babaki ba lekotsweng",
+    stat_reports: "Ditlaleho tsa QoS tse tswang ho batho",
+    stat_conversions: "Ho fetoha/ho ingodisa ho tlalehilweng",
+    live_status_title: "Boemo ba Hajwale — bo tlalehilweng ke basebedisi",
+    report_status: "Tlaleha boemo ba hajwale",
+    status_live: "E a sebetsa",
+    status_partial: "Karolo",
+    status_down: "Ha e sebetse",
+    status_down_long: "Ha e sebetse nako e telele (24h+)",
+    no_status_yet: "Ha ho na boemo bo tlalehilweng hajwale — eba wa pele ho tlaleha.",
+    btn_submit_status: "Romela Boemo",
+    btn_export_status: "Ntsha CSV ya Boemo",
+    bandwidth_title: "Lebelo la Network — dihora tse 24 tse fetileng, tse tswang ho batho",
+    report_speed: "Tlaleha teko ya lebelo",
+    download_label: "Download (Mbps)",
+    upload_label: "Upload (Mbps)",
+    btn_submit_speed: "Romela Teko ya Lebelo",
+    btn_export_speed: "Ntsha CSV ya Lebelo",
+    no_speed_data: "Ha ho na diteko tsa lebelo tse tlalehilweng dihoreng tse 24 tse fetileng",
+    no_speed_reports_yet: "Ha ho na diteko tsa lebelo tse tlalehilweng hajwale — eba wa pele.",
+    speed_ranking_title: "Lebelo la Network — le hlophisitsweng, dihora tse 24",
+    speed_ranking_sub: "Di tswa diteko tsa lebelo tse fanweng ke batho: diphetho di beiwa dihlopheng tsa metsotso e 30 dihoreng tse 24 tse fetileng mme tsa lekanngwa sehlopha ka sehlopha, hore ditlaleho tse ngata ka nako e le nngwe di se ke tsa fetola nomoro. Green = ka hodimo ho karolelano ya babaki bohle, yellow = haufi le karolelano, red = ka tlase ho karolelano.",
+    stat_speed_isps: "Babaki ba nang le data ya lebelo (24h)",
+    stat_speed_reports: "Ditlaleho tsa lebelo (dihoreng tse 24)",
+    speed_no_recent_any: "Ha ho na diteko tsa lebelo tse tlalehilweng dihoreng tse 24 tse fetileng.",
+    speed_no_recent: "Ha ho na data ya morao-rao (24h)"
+  },
+  toi: { // best-effort draft, unreviewed — LOWER confidence than sn/nd/tn, please prioritize native-speaker review (see README)
+    lang_label: "Mwaambo",
+    translate_help: "Amugwasye kusandulula / kupa lulamiko",
+    banner_local: "🟡 Nzila yamuno — amuvwelane a Supabase (yalubbi) kutegwa zibalo zyaabane (amubone README.md)",
+    banner_connecting: "⏳ Kuyanzana anethiwekki iyaabana…",
+    banner_live: "🟢 Yavwelanisigwa — zibalo ziyaabana abeenzu boonse (Supabase)",
+    banner_error: "🔴 Kwakachitika lubo kusika kunethiwekki iyaabana — kutondezya zibalo zibambidwe muzu bulawuza ooyu buyo",
+    search_placeholder: "Amuyandaule bapi ba intaneti…",
+    filter_all: "Zyoonse",
+    filter_mobile: "Foni",
+    filter_fixed: "Zyaanzene & Zitakwe intambo",
+    btn_export_pdf: "Amutumine Lipoti lya PDF",
+    btn_export_csv: "Amutumine CSV ya Bapi",
+    btn_export_qos: "Amutumine CSV ya QoS",
+    btn_export_epub: "Amutumine EPUB",
+    qos_title: "Bubotu bwaMulimo — buzwa kubantu",
+    btn_rate: "Amupe mupi ooyu ntenda",
+    your_rating: "Ntenda yako",
+    btn_use_location: "Amubelesye busena bwangu",
+    city_manual: "…naa musale munzi lwenu",
+    comment_placeholder: "Tacheelede: amupandulule mbomuchiona (lubilo, lusyomo, kuzimwa kwanethiwekki)…",
+    btn_submit_rating: "Amutumizye Ntenda",
+    no_ratings_yet: "Taakwe ntenda lino",
+    no_reports_yet: "Taakwe malipoti lino — amube wakusaanguna kupa mupi ooyu ntenda.",
+    sync_shared: "ziyaabana abeenzu boonse",
+    sync_local: "zibambidwe muzu bulawuza ooyu buyo",
+    impact_badge: "🎉 Bantu ba {n} bakaamba kuti bakachengukila naa kulembya kumupi ooyu nibakamana kubelesya tracker eeyi.",
+    impact_title: "Sena wakachenguka naa wakalembya nkaambo kazintu nzumwakajana aawa?",
+    impact_sub: "Amutwaambile — eezi zitondezya bapi nzibazwidilila bantu nkaambo kalusyomo aluyando, kutali mpindu luzutu.",
+    impact_new_isp: "Mupi mupya / ngomwakasala",
+    impact_prev_isp: "Mupi wakusaanguna (tacheelede)",
+    impact_reasons: "Nkaambonzi nkomwakachenguka?",
+    reason_reliability: "Lusyomo",
+    reason_support: "Lugwasyo lwabantu bawula",
+    reason_price: "Mpindu",
+    reason_speed: "Lubilo",
+    reason_coverage: "Kusika kwanethiwekki",
+    reason_other: "Zimwi",
+    btn_submit_story: "Amutumizye",
+    footer_note1: "Amuchiindile mulongo kuti muuvwule",
+    footer_note2: "amuchiindile chitondezyo chabukkale kuti chizungaane kuzwa ku confirmed kuya ku estimated kuya ku unconfirmed · amuyandaule alimwi musale kujulu",
+    reset_link: "amubambulule / amubweze zibalo zyaawa",
+    stat_isps: "Bapi mbatulangilila",
+    stat_reports: "Malipoti a QoS azwa kubantu",
+    stat_conversions: "Kuchenguka/kulembya kwakaambwa",
+    live_status_title: "Bukkale bwaLino — bwakaambwa babelesi",
+    report_status: "Amwaambe bukkale bwalino",
+    status_live: "Ulibeleka",
+    status_partial: "Chibeela",
+    status_down: "Taubeleki",
+    status_down_long: "Taubeleki kwachiindi chilamfu (24h+)",
+    no_status_yet: "Taakwe bukkale bwakaambwa lino — amube wakusaanguna kwaamba.",
+    btn_submit_status: "Amutumizye Bukkale",
+    btn_export_status: "Amutumine CSV ya Bukkale",
+    bandwidth_title: "Lubilo lwaNethiwekki — mawoola aali 24 aainda, azwa kubantu",
+    report_speed: "Amwaambe kusunka kwalubilo",
+    download_label: "Download (Mbps)",
+    upload_label: "Upload (Mbps)",
+    btn_submit_speed: "Amutumizye Kusunka Kwalubilo",
+    btn_export_speed: "Amutumine CSV yalubilo",
+    no_speed_data: "Taakwe kusunka kwalubilo kwakaambwa mumawoola aali 24 aainda",
+    no_speed_reports_yet: "Taakwe kusunka kwalubilo kwakaambwa lino — amube wakusaanguna.",
+    speed_ranking_title: "Lubilo lwaNethiwekki — lwabikkwa mumulongo, mawoola aali 24",
+    speed_ranking_sub: "Zizwa kuzisunko zyalubilo nzibapa bantu: masobelo abikkwa muzikamu zyaminiti ili 30 mumawoola aali 24 aainda alimwi apimwa chikamu achikamu, kuchitila kuti malipoti manji kuchiindi chomwe atashinsyi bbala. Green = kujulu kwamuya wabapi boonse, yellow = afwaafwi amuya, red = ansi amuya.",
+    stat_speed_isps: "Bapi balaazibalo zyalubilo (24h)",
+    stat_speed_reports: "Malipoti alubilo (mumawoola aali 24)",
+    speed_no_recent_any: "Taakwe kusunka kwalubilo kwakaambwa mumawoola aali 24 aainda.",
+    speed_no_recent: "Taakwe zibalo zyalino-lino (24h)"
+  },
+  tn: { // best-effort draft, unreviewed (same status as ChiShona/IsiNdebele — see README)
+    lang_label: "Puo",
+    translate_help: "Thusa go ranola / tshitsa phoso",
+    banner_local: "🟡 Tekanyo ya lefelo — golaganya Supabase (mahala) go abelana data (bona README.md)",
+    banner_connecting: "⏳ E golaganya le network e e abelanwang…",
+    banner_live: "🟢 E golaganeditswe — dipego di abelanwa le baeng botlhe (Supabase)",
+    banner_error: "🔴 Go paletswe go fitlha kwa networking e e abelanwang — go bontsha data e e bolokilweng mo browser fela",
+    search_placeholder: "Batla batlamedi ba inthanete…",
+    filter_all: "Tsotlhe",
+    filter_mobile: "Founu",
+    filter_fixed: "E golagantsweng le e sena thapo",
+    btn_export_pdf: "Ntsha Pego ya PDF",
+    btn_export_csv: "Ntsha CSV ya Batlamedi",
+    btn_export_qos: "Ntsha CSV ya QoS",
+    btn_export_epub: "Ntsha EPUB",
+    qos_title: "Boleng jwa Tirelo — bo tswa mo bathong",
+    btn_rate: "Naya Motlamedi ono maduo",
+    your_rating: "Maduo a gago",
+    btn_use_location: "Dirisa lefelo la me",
+    city_manual: "…kgotsa tlhopha toropo ka bowena",
+    comment_placeholder: "Ga se botlhokwa: tlhalosa maiteko a gago (lobelo, tshepagalo, go khutlisiwa ga network)…",
+    btn_submit_rating: "Romela Maduo",
+    no_ratings_yet: "Ga go na maduo jaanong",
+    no_reports_yet: "Ga go na dipego jaanong — nna wa ntlha go naya motlamedi ono maduo.",
+    sync_shared: "e abelanwa le baeng botlhe",
+    sync_local: "e bolokilwe mo browser eno fela",
+    impact_badge: "🎉 Batho ba {n} ba begile go fetogela kgotsa go ikwadisa mo motlamedi yo morago ga go dirisa tracker eno.",
+    impact_title: "A o fetogile kgotsa wa ikwadisa ka ntlha ya se o se boneng fano?",
+    impact_sub: "Re bolelele — se se bontsha gore ke batlamedi bafe ba ba nnyang le badirisi ka ntlha ya tshepagalo le tshegetso, e seng tlhwatlhwa fela.",
+    impact_new_isp: "Motlamedi yo mosha / o o mo tlhophileng",
+    impact_prev_isp: "Motlamedi wa pele (ga se botlhokwa)",
+    impact_reasons: "Ke eng fa o fetogile?",
+    reason_reliability: "Tshepagalo",
+    reason_support: "Tshegetso ya bareki",
+    reason_price: "Tlhwatlhwa",
+    reason_speed: "Lobelo",
+    reason_coverage: "Go fitlhelela ga network",
+    reason_other: "Tse dingwe",
+    btn_submit_story: "Romela",
+    footer_note1: "Tobetsa mola go o godisa",
+    footer_note2: "tobetsa lekgetlho lengwe le lengwe la maemo go le fetotsa go tswa go confirmed go ya go estimated go ya go unconfirmed · batla le go tlhopha kwa godimo",
+    reset_link: "ntšhafatsa / boela morago data e e mo lefelong leno",
+    stat_isps: "Batlamedi ba ba lebeletsweng",
+    stat_reports: "Dipego tsa QoS tse di tswang mo bathong",
+    stat_conversions: "Go fetoga/go ikwadisa mo go begilweng",
+    live_status_title: "Maemo a Jaanong — a a begilweng ke badirisi",
+    report_status: "Bega maemo a jaanong",
+    status_live: "E a dira",
+    status_partial: "E dira karolo",
+    status_down: "Ga e dire",
+    status_down_long: "Ga e dire dinako tse di telele (24h+)",
+    no_status_yet: "Ga go na maemo a a begilweng jaanong — nna wa ntlha go bega.",
+    btn_submit_status: "Romela Maemo",
+    btn_export_status: "Ntsha CSV ya Maemo",
+    bandwidth_title: "Lobelo lwa Network — diura tse 24 tse di fetileng, go tswa mo bathong",
+    report_speed: "Bega teko ya lobelo",
+    download_label: "Download (Mbps)",
+    upload_label: "Upload (Mbps)",
+    btn_submit_speed: "Romela Teko ya Lobelo",
+    btn_export_speed: "Ntsha CSV ya Lobelo",
+    no_speed_data: "Ga go na diteko tsa lobelo tse di begilweng mo diureng tse 24 tse di fetileng",
+    no_speed_reports_yet: "Ga go na diteko tsa lobelo tse di begilweng jaanong — nna wa ntlha.",
+    speed_ranking_title: "Lobelo lwa Network — go rulaganngwa, diura tse 24",
+    speed_ranking_sub: "Go bidiwa go tswa mo diteko tsa lobelo tse di tswang mo bathong: dipholo di beelwa mo maokong a metsotso e 30 mo diureng tse 24 tse di fetileng mme di kaakangwa okô ka okô, gore dipego tse dintsi ka nako e le nngwe di se ka tsa fetola nomoro. Green = kwa godimo ga tekanyetso ya batlamedi botlhe, yellow = gaufi le tekanyetso, red = kwa tlase ga tekanyetso.",
+    stat_speed_isps: "Batlamedi ba ba nang le data ya lobelo (24h)",
+    stat_speed_reports: "Dipego tsa lobelo (mo diureng tse 24)",
+    speed_no_recent_any: "Ga go na diteko tsa lobelo tse di begilweng mo diureng tse 24 tse di fetileng.",
+    speed_no_recent: "Ga go na data ya morago (24h)"
+  },
+  ve: { // best-effort draft, unreviewed (same status as ChiShona/IsiNdebele — see README)
+    lang_label: "Luambo",
+    translate_help: "Thusani u ṱalutshedza / ni ṋee vhulungami",
+    banner_local: "🟡 Nzira ya hayani — vhambedzani na Supabase (mahala) uri data i kovhelane (sedzani README.md)",
+    banner_connecting: "⏳ I khou vhambedzana na nethiwekhe ine ya kovhelanwa…",
+    banner_live: "🟢 Yo vhambedzana — data i kovhelana na vhaeni vhoṱhe (Supabase)",
+    banner_error: "🔴 Zwo kundelela u swikelela nethiwekhe ine ya kovhelanwa — zwi khou sumela data yo vhulungwaho kha burausa heyi fhedzi",
+    search_placeholder: "Ṱoḓani vhaḽisi vha inthanete…",
+    filter_all: "Zwoṱhe",
+    filter_mobile: "Founi",
+    filter_fixed: "Yo vhofhaho & Hu si na tambo",
+    btn_export_pdf: "Bveisani Muvhigo wa PDF",
+    btn_export_csv: "Bveisani CSV ya Vhaḽisi",
+    btn_export_qos: "Bveisani CSV ya QoS",
+    btn_export_epub: "Bveisani EPUB",
+    qos_title: "Vhuḓi ha Tshumelo — u bva kha vhathu",
+    btn_rate: "Ṋeani muḽisi hoyu maṱoso",
+    your_rating: "Maṱoso au",
+    btn_use_location: "Shumisani fhethu hanga",
+    city_manual: "…kana khetheni ḓoroboni nga inwe",
+    comment_placeholder: "A zwi ṱoḓei: ṱalutshedzani zwe na tangana nazwo (luvhilo, u fulufhedzea, u fhelelwa ha nethiwekhe)…",
+    btn_submit_rating: "Rumelani Maṱoso",
+    no_ratings_yet: "A hu na maṱoso zwazwino",
+    no_reports_yet: "A hu na mivhigo zwazwino — ivhani wa u thoma u ṋea muḽisi hoyu maṱoso.",
+    sync_shared: "i kovhelana na vhaeni vhoṱhe",
+    sync_local: "yo vhulungwa kha burausa heyi fhedzi",
+    impact_badge: "🎉 Vhathu vha {n} vho vhiga uri vho shanduka kana vho ṅwalisa kha muḽisi hoyu nga murahu ha u shumisa tracker heyi.",
+    impact_title: "Naa no shanduka kana na ṅwalisa nga mulandu wa zwe na zwi wana afha?",
+    impact_sub: "Ri vhudzeni — hezwi zwi sumela uri ndi vhaḽisi vhafhio vhane vha kunga vhathengi nga mulandu wa u fulufhedzea na themendelo, hu si mutengo fhedzi.",
+    impact_new_isp: "Muḽisi muswa / we na mu khetha",
+    impact_prev_isp: "Muḽisi wa u thoma (a zwi ṱoḓei)",
+    impact_reasons: "Ndi ngani no shanduka?",
+    reason_reliability: "U fulufhedzea",
+    reason_support: "Themendelo ya vhathengi",
+    reason_price: "Mutengo",
+    reason_speed: "Luvhilo",
+    reason_coverage: "U swikelela ha nethiwekhe",
+    reason_other: "Zwiṅwe",
+    btn_submit_story: "Rumelani",
+    footer_note1: "Kwatani murongo u itela u u ṱanḓavhudza",
+    footer_note2: "kwatani tshiga tshiṅwe na tshiṅwe tsha vhuimo u itela u tshi rembulusa u bva kha confirmed u ya kha estimated u ya kha unconfirmed · ṱoḓani na u khetha nṱha",
+    reset_link: "vusulusani / vhuedzedzani data ya fhano",
+    stat_isps: "Vhaḽisi vhane vha khou lavhelelwa",
+    stat_reports: "Mivhigo ya QoS i bvaho kha vhathu",
+    stat_conversions: "U shanduka/u ṅwalisa zwo vhigwaho",
+    live_status_title: "Vhuimo ha Zwazwino — ho vhigwaho nga vhashumisi",
+    report_status: "Vhigani vhuimo ha zwazwino",
+    status_live: "I khou shuma",
+    status_partial: "Tshipiḓa",
+    status_down: "A i shumi",
+    status_down_long: "A i shumi tshifhinga tshilapfu (24h+)",
+    no_status_yet: "A hu na vhuimo ho vhigwaho zwazwino — ivhani wa u thoma u vhiga.",
+    btn_submit_status: "Rumelani Vhuimo",
+    btn_export_status: "Bveisani CSV ya Vhuimo",
+    bandwidth_title: "Luvhilo lwa Nethiwekhe — awara dza 24 dzo fhiraho, dzi bvaho kha vhathu",
+    report_speed: "Vhigani mulingo wa luvhilo",
+    download_label: "Download (Mbps)",
+    upload_label: "Upload (Mbps)",
+    btn_submit_speed: "Rumelani Mulingo wa Luvhilo",
+    btn_export_speed: "Bveisani CSV ya Luvhilo",
+    no_speed_data: "A hu na milingo ya luvhilo yo vhigwaho kha awara dza 24 dzo fhiraho",
+    no_speed_reports_yet: "A hu na milingo ya luvhilo yo vhigwaho zwazwino — ivhani wa u thoma.",
+    speed_ranking_title: "Luvhilo lwa Nethiwekhe — lwo rongwaho, awara dza 24",
+    speed_ranking_sub: "Zwi bva kha milingo ya luvhilo yo ṋetshedzwaho nga vhathu: mvelelo dzi vhewa kha zwigwada zwa mimunithi ya 30 kha awara dza 24 dzo fhiraho nahone dza linganyiswa tshigwada nga tshigwada, u itela uri mivhigo minzhi nga tshifhinga tshithihi i sa shandule nomboro. Green = nṱha ha tsumbanyana ya vhaḽisi vhoṱhe, yellow = tsini na tsumbanyana, red = nga fhasi ha tsumbanyana.",
+    stat_speed_isps: "Vhaḽisi vhane vha vha na data ya luvhilo (24h)",
+    stat_speed_reports: "Mivhigo ya luvhilo (kha awara dza 24)",
+    speed_no_recent_any: "A hu na milingo ya luvhilo yo vhigwaho kha awara dza 24 dzo fhiraho.",
+    speed_no_recent: "A hu na data ya zwenezwino (24h)"
+  },
+  xh: { // best-effort draft, unreviewed (same status as ChiShona/IsiNdebele — see README)
+    lang_label: "Ulwimi",
+    translate_help: "Nceda uguqulele / cebisa ulungiso",
+    banner_local: "🟡 Imowudi yasekhaya — dibanisa i-Supabase (yamahhala) ukuze idatha yabelwane (jonga i-README.md)",
+    banner_connecting: "⏳ Iyaqhagamshelana nomthungelwano owabelwanayo…",
+    banner_live: "🟢 Kudibanisiwe — idatha yabelwana nabo bonke abatyeleli (Supabase)",
+    banner_error: "🔴 Kwehlulekile ukufikelela kumthungelwano owabelwanayo — kubonisa idatha egciniweyo kule browser kuphela",
+    search_placeholder: "Khangela ababoneleli be-intanethi…",
+    filter_all: "Konke",
+    filter_mobile: "Iselula",
+    filter_fixed: "Ezimiselweyo & Ezingenantambo",
+    btn_export_pdf: "Khupha Ingxelo ye-PDF",
+    btn_export_csv: "Khupha i-CSV yaBaboneleli",
+    btn_export_qos: "Khupha i-CSV ye-QoS",
+    btn_export_epub: "Khupha i-EPUB",
+    qos_title: "Umgangatho weNkonzo — ovela ebantwini",
+    btn_rate: "Nika lo mboneleli amanqaku",
+    your_rating: "Amanqaku akho",
+    btn_use_location: "Sebenzisa indawo yam",
+    city_manual: "…okanye khetha isixeko ngokwakho",
+    comment_placeholder: "Akunyanzelekanga: chaza amava akho (isantya, ukuthembeka, ukuphazamiseka komthungelwano)…",
+    btn_submit_rating: "Thumela Amanqaku",
+    no_ratings_yet: "Akukho manqaku okwangoku",
+    no_reports_yet: "Akukho ngxelo okwangoku — yiba ngowokuqala ukunika lo mboneleli amanqaku.",
+    sync_shared: "kwabelwana nabo bonke abatyeleli",
+    sync_local: "kugciniwe kule browser kuphela",
+    impact_badge: "🎉 Abantu abangu-{n} baxele ukuba batshintshele okanye babhalisela lo mboneleli emva kokusebenzisa le tracker.",
+    impact_title: "Ngaba utshintshile okanye wabhalisa ngenxa yoko ukufumene apha?",
+    impact_sub: "Sixelele — oku kubonisa ukuba ngoobani ababoneleli abaphumelela abathengi ngenxa yokuthembeka noxhaso, kungekhona ixabiso kuphela.",
+    impact_new_isp: "Umboneleli omtsha / omkhethileyo",
+    impact_prev_isp: "Umboneleli wangaphambili (akunyanzelekanga)",
+    impact_reasons: "Kutheni utshintshile?",
+    reason_reliability: "Ukuthembeka",
+    reason_support: "Inkxaso yabathengi",
+    reason_price: "Ixabiso",
+    reason_speed: "Isantya",
+    reason_coverage: "Ukufikelela komthungelwano",
+    reason_other: "Okunye",
+    btn_submit_story: "Thumela",
+    footer_note1: "Cofa umgca ukuze uwandise",
+    footer_note2: "cofa naliphi na iqhosha lemeko ukuze ujikeleze ukusuka kwi-confirmed uye kwi-estimated uye kwi-unconfirmed · khangela kwaye ukhethe ngasentla",
+    reset_link: "hlaziya / buyisela idatha yalapha",
+    stat_isps: "Ababoneleli abalandelwayo",
+    stat_reports: "Iingxelo ze-QoS ezivela ebantwini",
+    stat_conversions: "Ukutshintsha/ukubhalisa okuxeliweyo",
+    live_status_title: "Imeko yaNgoku — exeliweyo ngabasebenzisi",
+    report_status: "Xela imeko yangoku",
+    status_live: "Iyasebenza",
+    status_partial: "Icandelo",
+    status_down: "Ayisebenzi",
+    status_down_long: "Ayisebenzi ixesha elide (24h+)",
+    no_status_yet: "Akukho meko ixeliweyo okwangoku — yiba ngowokuqala ukuxela.",
+    btn_submit_status: "Thumela Imeko",
+    btn_export_status: "Khupha i-CSV yeMeko",
+    bandwidth_title: "Isantya soMthungelwano — iiyure ezingu-24 ezidlulileyo, ezivela ebantwini",
+    report_speed: "Xela uvavanyo lwesantya",
+    download_label: "Ukukhuphela (Mbps)",
+    upload_label: "Ukulayisha (Mbps)",
+    btn_submit_speed: "Thumela Uvavanyo lwesAntya",
+    btn_export_speed: "Khupha i-CSV yesAntya",
+    no_speed_data: "Akukho luvavanyo lwesantya lwexeliweyo kwiiyure ezingu-24 ezidlulileyo",
+    no_speed_reports_yet: "Akukho luvavanyo lwesantya lwexeliweyo okwangoku — yiba ngowokuqala.",
+    speed_ranking_title: "Isantya soMthungelwano — olucwangcisiweyo, iiyure ezingu-24",
+    speed_ranking_sub: "Kubalwa kwiimvavanyo zesantya ezingeniswe ngabantu: iziphumo zibekwa kumaqela emizuzu engama-30 kwiiyure ezingu-24 ezidlulileyo baze balinganiswe iqela ngeqela, ukuze iingxelo ezininzi ngexesha elinye zingakwazi ukuguqula inani. Green = ngaphezulu komlinganiselo wababoneleli bonke, yellow = kufutshane nomlinganiselo, red = ngaphantsi komlinganiselo.",
+    stat_speed_isps: "Ababoneleli abanedatha yesantya (24h)",
+    stat_speed_reports: "Iingxelo zesantya (kwiiyure ezingu-24)",
+    speed_no_recent_any: "Akukho luvavanyo lwesantya lwexeliweyo kwiiyure ezingu-24 ezidlulileyo.",
+    speed_no_recent: "Akukho datha yamva nje (24h)"
+  }
 };
-const LANG_NAMES = { en:"English", sn:"ChiShona", nd:"IsiNdebele", kck:"TjiKalanga" };
+const LANG_NAMES = {
+  en:"English", sn:"ChiShona", nd:"IsiNdebele", kck:"TjiKalanga",
+  ny:"Chewa", bwg:"Chibarwe", tjw:"Khoisan (Tjwao)", nmq:"Nambya", ndc:"Ndau",
+  ts:"Shangani", st:"Sotho", toi:"Tonga", tn:"Tswana", ve:"Venda", xh:"Xhosa"
+};
 const TRANSLATABLE_KEYS = Object.keys(I18N.en);
 
 let currentLang = "en";
@@ -905,6 +1496,66 @@ function backboneHtml(isp){
     <span class="backbone-dot" style="background:${meta.color}"></span>
     🌐 Backbone (AS${asn}, live via RIPEstat): <strong>${meta.label}</strong> — seen by ${pct}% of monitored internet routers worldwide
   </div>`;
+}
+
+/* ---------- Live national connectivity signal (real, dynamic, no-auth feed) ----------
+   IODA (Internet Outage Detection and Analysis — api.ioda.inetintel.cc.gatech.edu) is a
+   free, public, no-signup API run by Georgia Tech/CAIDA that tracks how many BGP-routed
+   /24 network blocks are currently visible for a country, sampled every 5 minutes from
+   real internet routing data. It's the same public API IODA's own dashboard uses from
+   the browser. This asks, honestly: "right now, how many of Zimbabwe's normally-visible
+   network blocks are actually reachable on the global internet?" — a genuine national-level,
+   real-time signal, independent of RIPEstat's per-ISP check above and not gated behind any
+   backend setup. If the count drops sharply relative to its own recent baseline, that's a
+   real sign of a country-wide connectivity event (e.g. a cable cut or a shutdown), not a
+   crowdsourced guess. */
+const IODA_ENTITY_CODE = "ZW";
+const IODA_ENTITY_NAME = "Zimbabwe";
+let IODA_SIGNAL; // undefined = not yet checked, null = unavailable, object = live data
+async function refreshIodaSignal(){
+  if(typeof fetch !== "function"){ IODA_SIGNAL = null; renderIodaBadge(); return; }
+  try{
+    const untilTs = Math.floor(Date.now()/1000);
+    const fromTs = untilTs - 3*60*60; // last 3 hours, 5-min native step
+    const url = `https://api.ioda.inetintel.cc.gatech.edu/v2/signals/raw/country/${IODA_ENTITY_CODE}?datasource=bgp&from=${fromTs}&until=${untilTs}`;
+    const res = await fetch(url, { cache:"no-store" });
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const json = await res.json();
+    const series = (json && json.data && json.data[0] && json.data[0][0] && json.data[0][0].values) || [];
+    const clean = series.filter(v => typeof v === "number" && v > 0);
+    if(clean.length < 2){ IODA_SIGNAL = null; renderIodaBadge(); return; }
+    const latest = clean[clean.length-1];
+    const baseline = clean.slice(0, -1).reduce((a,b)=>a+b,0) / (clean.length-1);
+    const ratio = baseline > 0 ? latest/baseline : 1;
+    let level;
+    if(ratio >= 0.9) level = "normal";
+    else if(ratio >= 0.5) level = "reduced";
+    else level = "severe";
+    IODA_SIGNAL = { latest, baseline, ratio, level, ts: Date.now() };
+  }catch(e){
+    console.warn("IODA national connectivity signal unavailable", e);
+    IODA_SIGNAL = null;
+  }
+  renderIodaBadge();
+}
+const IODA_META = {
+  normal:  { color:"var(--green)",  label:"Normal — no sign of a national outage" },
+  reduced: { color:"var(--yellow)", label:"Reduced — fewer network blocks visible than usual" },
+  severe:  { color:"var(--red)",    label:"Severe — sharp drop in visible network blocks" }
+};
+function iodaBadgeHtml(){
+  if(IODA_SIGNAL === undefined) return `<div class="backbone-badge backbone-loading">🌍 Checking live national connectivity via IODA (Georgia Tech/CAIDA)…</div>`;
+  if(IODA_SIGNAL === null) return "";
+  const meta = IODA_META[IODA_SIGNAL.level];
+  const pct = Math.round(IODA_SIGNAL.ratio*100);
+  return `<div class="backbone-badge" style="border-color:${meta.color}">
+    <span class="backbone-dot" style="background:${meta.color}"></span>
+    🌍 ${IODA_ENTITY_NAME} national connectivity (live, IODA/CAIDA, public no-auth feed): <strong>${meta.label}</strong> — ${Math.round(IODA_SIGNAL.latest)} routed /24 blocks visible now (${pct}% of the last-3h baseline)
+  </div>`;
+}
+function renderIodaBadge(){
+  const el = document.getElementById("iodaBadge");
+  if(el) el.innerHTML = iodaBadgeHtml();
 }
 
 /* ---------- Crowdsourced quality-of-service data ---------- */
@@ -2539,6 +3190,7 @@ renderAll();
 initBackend();
 refreshBackboneVisibility(); // live RIPEstat fetch, fire-and-forget — re-renders when it resolves
 refreshRadarBenchmark();     // live Cloudflare Radar fetch via Edge Function, fire-and-forget
+refreshIodaSignal();         // live IODA/CAIDA national connectivity fetch, no setup needed, fire-and-forget
 </script>
 </body>
 </html>
