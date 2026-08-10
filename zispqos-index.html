@@ -193,6 +193,40 @@
   }
   .comment-box:focus{outline:none;border-color:var(--accent2);}
 
+  .simple-toggle{
+    display:inline-flex;align-items:center;gap:10px;background:var(--panel);
+    border:2px solid var(--accent);border-radius:999px;padding:12px 20px;
+    font-size:15px;font-weight:700;color:var(--accent);margin-top:14px;
+  }
+  .simple-toggle:hover{background:var(--panel2);}
+  .simple-toggle[aria-pressed="true"]{background:var(--accent);color:#0b0f14;}
+  .simple-toggle .simple-emoji{font-size:22px;}
+  .simple-nav{
+    display:none;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+    gap:14px;margin:22px 0;
+  }
+  body.simple-mode .simple-nav{display:grid;}
+  body.simple-mode .stats{display:none;}
+  body.simple-mode .toolbar{display:none;}
+  .simple-btn{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:8px;background:var(--panel);border:2px solid var(--border);
+    border-radius:20px;padding:22px 8px;min-height:112px;color:var(--text);
+    font-size:14px;font-weight:700;text-align:center;line-height:1.25;
+  }
+  .simple-btn:hover{border-color:var(--accent2);background:var(--panel2);}
+  .simple-btn[aria-pressed="true"]{border-color:var(--accent);background:rgba(79,209,197,.15);color:var(--accent);}
+  .simple-btn .simple-icon{font-size:42px;line-height:1;}
+  body.simple-mode .active-filter-banner{font-size:15px;padding:12px 18px;}
+  body.simple-mode .row{padding:18px 16px;}
+  body.simple-mode .rank{display:none;}
+  body.simple-mode .name{font-size:19px;}
+  body.simple-mode .subs small{display:none;}
+  body.simple-mode .pill{display:none;}
+  body.simple-mode .qos-badge{font-size:16px;font-weight:700;}
+  body.simple-mode .lang-row{gap:10px;}
+  body.simple-mode .lang-chip{font-size:14px;padding:10px 16px;}
+
   footer{margin-top:28px;color:var(--muted);font-size:12px;text-align:center;line-height:1.6;}
   .matokipedo-footer{
     display:flex;flex-direction:column;align-items:center;gap:8px;
@@ -417,6 +451,12 @@
     <div id="translateQueue"></div>
   </div>
 
+  <button type="button" class="simple-toggle" id="simpleModeToggle" aria-pressed="false">
+    <span class="simple-emoji" aria-hidden="true">🧸</span>
+    <span id="simpleModeLabel">Simple Mode</span>
+  </button>
+  <div class="simple-nav" id="simpleNav" role="group" aria-label="Simple navigation"></div>
+
   <div class="stats" id="stats"></div>
 
   <div class="toolbar">
@@ -610,7 +650,15 @@ const I18N = {
     phone_detect_hint: "📱 Looks like {isp}, based on your number — numbers can be ported, please confirm.",
     phone_label_switch: "Your phone number",
     phone_placeholder_switch: "So we can help you switch — e.g. 077 123 4567",
-    phone_required_note: "Please add a phone number so we can follow up about your switch."
+    phone_required_note: "Please add a phone number so we can follow up about your switch.",
+    simple_mode_off: "Simple Mode",
+    simple_mode_on: "Simple Mode: ON",
+    simple_nav_reset: "Show all",
+    simple_nav_mobile: "Phone internet",
+    simple_nav_fixed: "Home internet",
+    simple_nav_best: "Best rated",
+    simple_nav_near: "Near me",
+    simple_nav_lang: "Language"
   },
   sn: {
     lang_label: "Mutauro",
@@ -2236,6 +2284,26 @@ function applyStaticTranslations(){
   const impactCitySelect = document.getElementById("impactCitySelect");
   impactCitySelect.innerHTML = `<option value="">${t("city_manual")}</option>` + CITIES.map(c=>`<option value="${c.name}">${c.name}</option>`).join("");
 
+  document.getElementById("simpleModeLabel").textContent = document.body.classList.contains("simple-mode") ? t("simple_mode_on") : t("simple_mode_off");
+
+  const simpleNav = document.getElementById("simpleNav");
+  const simpleItems = [
+    { filter:"all", icon:"📶", label:t("simple_nav_reset") },
+    { filter:"Mobile", icon:"📱", label:t("simple_nav_mobile") },
+    { filter:"Fixed/Wireless", icon:"🏠", label:t("simple_nav_fixed") }
+  ];
+  simpleNav.innerHTML = simpleItems.map(it=>`<button type="button" class="simple-btn" data-simple-filter="${it.filter}" aria-pressed="${state.filter===it.filter}"><span class="simple-icon" aria-hidden="true">${it.icon}</span><span>${it.label}</span></button>`).join("");
+  simpleNav.querySelectorAll("[data-simple-filter]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      state.filter = btn.getAttribute("data-simple-filter");
+      document.querySelectorAll(".chip[data-filter]").forEach(c=>{
+        const active = c.getAttribute("data-filter")===state.filter;
+        c.classList.toggle("active", active);
+      });
+      renderAll();
+    });
+  });
+
   document.querySelectorAll(".lang-chip").forEach(chip=>{
     chip.classList.toggle("active", chip.getAttribute("data-lang")===currentLang);
   });
@@ -2991,6 +3059,13 @@ document.querySelectorAll(".lang-chip").forEach(chip=>{
     try{ localStorage.setItem("zw_isp_lang", currentLang); }catch(e){}
     renderAll();
   });
+});
+
+document.getElementById("simpleModeToggle").addEventListener("click", ()=>{
+  const btn = document.getElementById("simpleModeToggle");
+  const active = document.body.classList.toggle("simple-mode");
+  btn.setAttribute("aria-pressed", active ? "true":"false");
+  document.getElementById("simpleModeLabel").textContent = active ? t("simple_mode_on") : t("simple_mode_off");
 });
 
 document.getElementById("toggleTranslatePanel").addEventListener("click", ()=>{
