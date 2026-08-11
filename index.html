@@ -238,6 +238,14 @@
   .matokipedo-footer .reset-link{font-size:11px;}
   footer .reset-link{color:var(--accent2);cursor:pointer;text-decoration:underline;}
 
+  .feedback-panel{
+    background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+    padding:16px;margin-top:18px;
+  }
+  .feedback-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0;}
+  .feedback-row label{font-size:12px;color:var(--muted);flex:1 1 220px;}
+  .feedback-panel .comment-box{margin-top:6px;}
+
   /* Translation panel */
   .translate-panel{
     background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
@@ -524,6 +532,43 @@
     <div id="radarBenchmark"></div>
     <div class="stats" id="speedStats"></div>
     <div id="speedRankedList"></div>
+  </section>
+
+  <section class="feedback-panel" id="feedbackPanel">
+    <div class="panel-head">
+      <strong>Help us improve this tracker</strong>
+      <div class="lexicon-note">Quick check for testers — used to fix location matching and rough edges. Nothing personal is collected.</div>
+    </div>
+    <div class="feedback-row">
+      <label>Did the location button detect the right city?</label>
+      <select class="city-select" id="fbLocation">
+        <option value="not_tried">Didn't try it</option>
+        <option value="yes">Yes, correct</option>
+        <option value="no">No, wrong city</option>
+      </select>
+    </div>
+    <div class="feedback-row">
+      <label>Overall, how did the site feel to use?</label>
+      <select class="city-select" id="fbUsability">
+        <option value="great">Great</option>
+        <option value="ok">OK</option>
+        <option value="confusing">Confusing</option>
+      </select>
+    </div>
+    <div class="feedback-row">
+      <label>Did your language look right?</label>
+      <select class="city-select" id="fbLanguage">
+        <option value="not_checked">Didn't check</option>
+        <option value="yes">Yes</option>
+        <option value="no">No, something's off</option>
+      </select>
+    </div>
+    <textarea class="comment-box" id="fbComment" maxlength="1000" placeholder="Anything confusing, broken, or missing? (optional)"></textarea>
+    <div class="feedback-row">
+      <input class="city-select" id="fbCity" maxlength="60" placeholder="Your city (optional)">
+      <button class="btn small primary" id="fbSubmit" type="button">Send feedback</button>
+    </div>
+    <div class="loc-status" id="fbStatus"></div>
   </section>
 
   <footer class="matokipedo-footer">
@@ -2150,6 +2195,37 @@ async function submitReport(report){
   }
 }
 
+async function submitFeedback(){
+  const btn = document.getElementById("fbSubmit");
+  const status = document.getElementById("fbStatus");
+  if(!supa){
+    status.textContent = "Feedback needs the shared backend to be configured — nothing to send yet.";
+    return;
+  }
+  const payload = {
+    site: SITE_ID,
+    location_correct: document.getElementById("fbLocation").value,
+    usability: document.getElementById("fbUsability").value,
+    language_ok: document.getElementById("fbLanguage").value,
+    comment: (document.getElementById("fbComment").value || "").trim().slice(0,1000),
+    city: (document.getElementById("fbCity").value || "").trim().slice(0,60)
+  };
+  btn.disabled = true;
+  status.textContent = "Sending…";
+  try{
+    const { error } = await supa.from("tester_feedback").insert([payload]);
+    if(error) throw error;
+    status.textContent = "✅ Thanks — feedback sent.";
+    document.getElementById("fbComment").value = "";
+    document.getElementById("fbCity").value = "";
+  }catch(e){
+    console.warn("Could not send feedback", e);
+    status.textContent = "🔴 Couldn't send feedback — check your connection and try again.";
+  }finally{
+    btn.disabled = false;
+  }
+}
+
 async function submitStatus(entry){
   STATUS_REPORTS.push(entry);
   saveLocalStatus(STATUS_REPORTS);
@@ -3358,6 +3434,8 @@ document.getElementById("resetQos").addEventListener("click", async ()=>{
     renderAll();
   }
 });
+
+document.getElementById("fbSubmit").addEventListener("click", submitFeedback);
 
 renderAll();
 initBackend();
