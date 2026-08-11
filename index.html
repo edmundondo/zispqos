@@ -556,9 +556,10 @@
    Full walkthrough in README.md.
    ========================================================================= */
 const SUPABASE_CONFIG = {
-  url: "YOUR_SUPABASE_PROJECT_URL",       // e.g. "https://abcdefghijk.supabase.co"
-  anonKey: "YOUR_SUPABASE_ANON_PUBLIC_KEY" // the "anon public" API key, safe for client-side use
+  url: "https://etdxreehedewcctkdvuo.supabase.co",
+  anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV0ZHhyZWVoZWRld2NjdGtkdnVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzOTkwMDQsImV4cCI6MjEwMTk3NTAwNH0.8ohFQBJzglP2cjsdQW-xQ-g2DPNG0iZiNzRTLQDsVMY"
 };
+const SITE_ID = "zw"; // distinguishes this site's rows in the shared database
 
 const BACKEND_CONFIGURED = SUPABASE_CONFIG.url.indexOf("http") === 0
   && SUPABASE_CONFIG.anonKey && SUPABASE_CONFIG.anonKey.indexOf("YOUR_") !== 0;
@@ -2087,12 +2088,12 @@ async function initBackend(){
   setBanner("connecting", t("banner_connecting"));
   try{
     const [qosRes, convRes, trRes, statusRes, speedRes, refRes] = await Promise.all([
-      supa.from("qos_reports").select("isp,stars,city,comment,created_at").order("created_at",{ascending:false}).limit(1000),
-      supa.from("conversions").select("to_isp,from_isp,reasons,city,comment,created_at").order("created_at",{ascending:false}).limit(500),
-      supa.from("translations").select("id,lang,string_key,suggested_text,source_note,endorsements,status,created_at").order("created_at",{ascending:false}).limit(500),
-      supa.from("status_reports").select("isp,city,status,comment,created_at").order("created_at",{ascending:false}).limit(1000),
-      supa.from("speed_reports").select("isp,city,download_mbps,upload_mbps,comment,created_at").order("created_at",{ascending:false}).limit(1000),
-      supa.from("referral_clicks").select("isp,context,created_at").order("created_at",{ascending:false}).limit(2000)
+      supa.from("qos_reports").select("isp,stars,city,comment,created_at").eq("site", SITE_ID).order("created_at",{ascending:false}).limit(1000),
+      supa.from("conversions").select("to_isp,from_isp,reasons,city,comment,created_at").eq("site", SITE_ID).order("created_at",{ascending:false}).limit(500),
+      supa.from("translations").select("id,lang,string_key,suggested_text,source_note,endorsements,status,created_at").eq("site", SITE_ID).order("created_at",{ascending:false}).limit(500),
+      supa.from("status_reports").select("isp,city,status,comment,created_at").eq("site", SITE_ID).order("created_at",{ascending:false}).limit(1000),
+      supa.from("speed_reports").select("isp,city,download_mbps,upload_mbps,comment,created_at").eq("site", SITE_ID).order("created_at",{ascending:false}).limit(1000),
+      supa.from("referral_clicks").select("isp,context,created_at").eq("site", SITE_ID).order("created_at",{ascending:false}).limit(2000)
     ]);
     if(qosRes.error) throw qosRes.error;
     if(convRes.error) throw convRes.error;
@@ -2138,6 +2139,7 @@ async function submitReport(report){
   if(supa){
     try{
       const { error } = await supa.from("qos_reports").insert([{
+        site: SITE_ID,
         isp: report.isp, stars: report.stars, city: report.city, comment: report.comment
       }]);
       if(error) throw error;
@@ -2156,6 +2158,7 @@ async function submitStatus(entry){
   if(supa){
     try{
       const { error } = await supa.from("status_reports").insert([{
+        site: SITE_ID,
         isp: entry.isp, city: entry.city, status: entry.status, comment: entry.comment
       }]);
       if(error) throw error;
@@ -2174,6 +2177,7 @@ async function submitSpeed(entry){
   if(supa){
     try{
       const { error } = await supa.from("speed_reports").insert([{
+        site: SITE_ID,
         isp: entry.isp, city: entry.city, download_mbps: entry.download_mbps, upload_mbps: entry.upload_mbps, comment: entry.comment
       }]);
       if(error) throw error;
@@ -2191,6 +2195,7 @@ async function submitConversion(entry){
   if(supa){
     try{
       const { error } = await supa.from("conversions").insert([{
+        site: SITE_ID,
         to_isp: entry.to_isp, from_isp: entry.from_isp, reasons: entry.reasons, city: entry.city, comment: entry.comment
       }]);
       if(error) throw error;
@@ -2209,6 +2214,7 @@ async function submitTranslation(sugg){
   if(supa){
     try{
       const { data, error } = await supa.from("translations").insert([{
+        site: SITE_ID,
         lang: sugg.lang, string_key: sugg.string_key, suggested_text: sugg.suggested_text, source_note: sugg.source_note
       }]).select();
       if(error) throw error;
@@ -2273,8 +2279,6 @@ function applyStaticTranslations(){
   document.getElementById("impactLocLabel").textContent = t("btn_use_location");
   document.getElementById("impactComment").placeholder = t("comment_placeholder");
   document.getElementById("impactSubmitLabel").textContent = t("btn_submit_story");
-  document.getElementById("footerNote1").textContent = t("footer_note1");
-  document.getElementById("footerNote2").textContent = t("footer_note2");
   document.getElementById("resetQos").textContent = t("reset_link");
 
   document.getElementById("impactReasonTags").innerHTML = REASON_KEYS.map(k=>
@@ -2375,7 +2379,7 @@ async function logReferralClick(isp, context){
   saveLocalReferrals(REFERRAL_CLICKS);
   if(supa){
     try{
-      const { error } = await supa.from("referral_clicks").insert([{ isp: entry.isp, context: entry.context }]);
+      const { error } = await supa.from("referral_clicks").insert([{ site: SITE_ID, isp: entry.isp, context: entry.context }]);
       if(error) throw error;
     }catch(e){ console.warn("Could not sync referral click to shared backend", e); }
   }
