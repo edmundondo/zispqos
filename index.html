@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="app-version" content="1.0.0">
 <title>Zimbabwe ISP Tracker</title>
 <style>
   :root{
@@ -374,6 +375,25 @@
 </style>
 </head>
 <body>
+<!-- Matokipedo QC v1.0.0 — old-browser compatibility banner -->
+<div id="oldBrowserBanner" style="display:none;background:#3a2a10;color:#e8b93f;border:1px solid #5c4419;border-radius:8px;padding:10px 14px;margin:0 auto 16px;max-width:980px;font-size:13px;">
+  This page uses features your browser doesn't fully support, so parts of it may not work right. Try updating your
+  browser, or use the <a href="lite.html" style="color:#e8b93f;text-decoration:underline;">Lite version</a> — it
+  works everywhere, no JavaScript required.
+</div>
+<script>
+(function(){
+  try{
+    var ok = window.fetch && window.Promise && window.localStorage &&
+      Array.prototype.includes && Object.assign && window.CSS && CSS.supports &&
+      CSS.supports("display","grid") && CSS.supports("display","flex");
+    if(!ok){ document.getElementById("oldBrowserBanner").style.display = "block"; }
+  }catch(e){
+    var b = document.getElementById("oldBrowserBanner");
+    if(b){ b.style.display = "block"; }
+  }
+})();
+</script>
 <div class="wrap">
   <header>
     <div class="eyebrow">POTRAZ · Zimbabwe Telecoms</div>
@@ -577,6 +597,7 @@
       <span class="matokipedo-tagline">Live infrastructure monitoring by Matokipedo</span>
     </div>
     <span class="reset-link" id="resetQos">refresh / reset local data</span>
+    <div style="font-size:11px;color:var(--muted);margin-top:6px;">v1.0.0 &middot; <a href="CHANGELOG.md" style="color:inherit;">changelog</a></div>
   </footer>
 </div>
 
